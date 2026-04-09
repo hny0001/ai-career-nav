@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI时代职业咨询 | 未来职业导航</title>
+  <meta name="description" content="AI时代职业咨询，帮助你洞察职业趋势、规避风险、抓住新机遇。从农业时代到AI时代，全面解读职业发展史。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="main-nav" class="nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <span class="logo-icon">◆</span> AI职业导航
+      </a>
+      <div class="nav-links">
+        <a href="#history" class="nav-link" data-section="history">职业发展史</a>
+        <a href="#heatmap" class="nav-link" data-section="heatmap">风险热力图</a>
+        <a href="#newcareers" class="nav-link" data-section="newcareers">新职业机会</a>
+        <a href="#contact" class="nav-link nav-link-cta" data-section="contact">联系我</a>
+      </div>
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="#history" class="mobile-link">职业发展史</a>
+    <a href="#heatmap" class="mobile-link">风险热力图</a>
+    <a href="#newcareers" class="mobile-link">新职业机会</a>
+    <a href="#contact" class="mobile-link">联系我</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <div class="hero-bg-particles" id="particles"></div>
+    <div class="hero-content">
+      <div class="hero-badge animate-in">OPC · 职业发展咨询</div>
+      <h1 class="hero-title animate-in">
+        在<span class="gradient-text">AI时代</span><br />找到你的职业方向
+      </h1>
+      <p class="hero-subtitle animate-in">
+        从农业时代到AI时代，职业格局正在发生前所未有的巨变。<br />
+        我帮助你看清趋势、规避风险、抓住新机会。
+      </p>
+      <div class="hero-actions animate-in">
+        <a href="#history" class="btn btn-primary">探索职业变迁</a>
+        <a href="#contact" class="btn btn-outline">预约咨询</a>
+      </div>
+      <div class="hero-stats animate-in">
+        <div class="stat-item">
+          <span class="stat-number" data-target="4">0</span>
+          <span class="stat-label">大时代变迁</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="60">0</span><span class="stat-suffix">%</span>
+          <span class="stat-label">职业面临变革</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="50">0</span><span class="stat-suffix">+</span>
+          <span class="stat-label">新兴职业涌现</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>向下探索</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- Section 1: Career Development History Timeline -->
+  <section id="history" class="section section-history">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-tag">01 — 职业发展史</span>
+        <h2 class="section-title">从田野到<span class="gradient-text">云端</span></h2>
+        <p class="section-desc">
+          人类文明的每一次跃迁，都伴随着职业形态的彻底重塑。<br />
+          回顾历史，才能看清未来。
+        </p>
+      </div>
+
+      <div class="timeline">
+        <!-- Agricultural Era -->
+        <div class="timeline-item animate-in" data-era="agricultural">
+          <div class="timeline-dot">
+            <span class="era-icon">🌾</span>
+          </div>
+          <div class="timeline-card">
+            <div class="era-tag era-tag-agri">约10000年前</div>
+            <h3 class="era-title">农业时代</h3>
+            <p class="era-desc">
+              人类从狩猎采集转向定居农耕，土地成为核心生产资料。
+              90%以上的人口从事农业生产，职业分化极为有限。
+            </p>
+            <div class="era-details">
+              <div class="detail-item">
+                <span class="detail-icon">👨‍🌾</span>
+                <div>
+                  <strong>核心职业</strong>
+                  <p>农民、手工匠人、商人、士兵</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">⚡</span>
+                <div>
+                  <strong>驱动力</strong>
+                  <p>土地、自然资源、体力劳动</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">📊</span>
+                <div>
+                  <strong>特征</strong>
+                  <p>世袭制度、阶层固化、技能口传心授</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Industrial Era -->
+        <div class="timeline-item animate-in" data-era="industrial">
+          <div class="timeline-dot">
+            <span class="era-icon">🏭</span>
+          </div>
+          <div class="timeline-card">
+            <div class="era-tag era-tag-indus">18世纪 — 20世纪</div>
+            <h3 class="era-title">工业时代</h3>
+            <p class="era-desc">
+              蒸汽机和电力引发两次工业革命，工厂制度取代作坊，
+              大量农民涌入城市成为产业工人。职业开始标准化和专业化。
+            </p>
+            <div class="era-details">
+              <div class="detail-item">
+                <span class="detail-icon">👷</span>
+                <div>
+                  <strong>核心职业</strong>
+                  <p>工厂工人、工程师、会计、教师、医生</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">⚡</span>
+                <div>
+                  <strong>驱动力</strong>
+                  <p>机械化、标准化生产、资本</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">📊</span>
+                <div>
+                  <strong>特征</strong>
+                  <p>流水线作业、职业教育兴起、劳资关系</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Information Era -->
+        <div class="timeline-item animate-in" data-era="information">
+          <div class="timeline-dot">
+            <span class="era-icon">💻</span>
+          </div>
+          <div class="timeline-card">
+            <div class="era-tag era-tag-info">1970s — 2020s</div>
+            <h3 class="era-title">信息时代</h3>
+            <p class="era-desc">
+              计算机和互联网改变了一切。知识工作者成为主力军，
+              全球化让竞争与合作并存，"铁饭碗"概念逐渐瓦解。
+            </p>
+            <div class="era-details">
+              <div class="detail-item">
+                <span class="detail-icon">👨‍💻</span>
+                <div>
+                  <strong>核心职业</strong>
+                  <p>程序员、产品经理、设计师、金融分析师</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">⚡</span>
+                <div>
+                  <strong>驱动力</strong>
+                  <p>数据、互联网、全球化</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">📊</span>
+                <div>
+                  <strong>特征</strong>
+                  <p>知识经济、远程办公、平台经济兴起</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Era -->
+        <div class="timeline-item animate-in" data-era="ai">
+          <div class="timeline-dot active-era">
+            <span class="era-icon">🤖</span>
+          </div>
+          <div class="timeline-card card-active">
+            <div class="era-tag era-tag-ai">2023 — 未来</div>
+            <h3 class="era-title">AI时代 <span class="badge-now">NOW</span></h3>
+            <p class="era-desc">
+              大语言模型和通用人工智能正在重新定义"工作"的本质。
+              重复性脑力劳动面临替代，创造力和人际能力变得空前重要。
+              这不是一次简单的工具升级，而是职业文明的范式转移。
+            </p>
+            <div class="era-details">
+              <div class="detail-item">
+                <span class="detail-icon">🧠</span>
+                <div>
+                  <strong>核心能力</strong>
+                  <p>AI协作力、创造力、共情力、跨界整合</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">⚡</span>
+                <div>
+                  <strong>驱动力</strong>
+                  <p>大模型、AGI、人机协作</p>
+                </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">📊</span>
+                <div>
+                  <strong>特征</strong>
+                  <p>一人企业崛起、技能半衰期骤降、终身学习必选</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Career Risk Heatmap -->
+  <section id="heatmap" class="section section-heatmap">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-tag">02 — 风险热力图</span>
+        <h2 class="section-title">AI时代<span class="gradient-text">职业风险</span>全景</h2>
+        <p class="section-desc">
+          基于AI技术对各职业的可替代性评估，帮助你直观了解自己所在行业的风险等级。<br />
+          颜色越深，被AI替代的风险越高。
+        </p>
+      </div>
+
+      <!-- Legend -->
+      <div class="heatmap-legend animate-in">
+        <span class="legend-label">低风险</span>
+        <div class="legend-gradient"></div>
+        <span class="legend-label">高风险</span>
+      </div>
+
+      <!-- Heatmap Grid -->
+      <div class="heatmap-grid animate-in">
+        <!-- High Risk -->
+        <div class="heat-card risk-extreme" data-risk="95">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>数据录入员</h4>
+            <div class="heat-score">95%</div>
+            <p>标准化数据处理已被AI完全覆盖</p>
+          </div>
+        </div>
+        <div class="heat-card risk-extreme" data-risk="92">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>基础翻译</h4>
+            <div class="heat-score">92%</div>
+            <p>机器翻译质量已达到日常商用水平</p>
+          </div>
+        </div>
+        <div class="heat-card risk-extreme" data-risk="90">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>电话客服</h4>
+            <div class="heat-score">90%</div>
+            <p>AI语音客服已大规模部署</p>
+          </div>
+        </div>
+        <div class="heat-card risk-high" data-risk="85">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>基础会计</h4>
+            <div class="heat-score">85%</div>
+            <p>账务处理和报表生成高度自动化</p>
+          </div>
+        </div>
+        <div class="heat-card risk-high" data-risk="82">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>初级文案</h4>
+            <div class="heat-score">82%</div>
+            <p>生成式AI已能产出合格营销文案</p>
+          </div>
+        </div>
+        <div class="heat-card risk-high" data-risk="78">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>仓储物流员</h4>
+            <div class="heat-score">78%</div>
+            <p>自动化仓储和无人配送加速落地</p>
+          </div>
+        </div>
+        <!-- Medium Risk -->
+        <div class="heat-card risk-medium" data-risk="65">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>平面设计师</h4>
+            <div class="heat-score">65%</div>
+            <p>AI设计工具冲击基础设计需求</p>
+          </div>
+        </div>
+        <div class="heat-card risk-medium" data-risk="60">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>初级程序员</h4>
+            <div class="heat-score">60%</div>
+            <p>代码生成AI替代基础编码工作</p>
+          </div>
+        </div>
+        <div class="heat-card risk-medium" data-risk="55">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>法律助理</h4>
+            <div class="heat-score">55%</div>
+            <p>合同审查和法规检索被AI接管</p>
+          </div>
+        </div>
+        <div class="heat-card risk-medium" data-risk="50">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>金融分析师</h4>
+            <div class="heat-score">50%</div>
+            <p>量化分析被AI增强，但策略判断仍需人</p>
+          </div>
+        </div>
+        <!-- Low Risk -->
+        <div class="heat-card risk-low" data-risk="25">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>心理咨询师</h4>
+            <div class="heat-score">25%</div>
+            <p>深度共情和人际信任难以被替代</p>
+          </div>
+        </div>
+        <div class="heat-card risk-low" data-risk="20">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>职业教练</h4>
+            <div class="heat-score">20%</div>
+            <p>个性化指导和人生洞察依赖真人</p>
+          </div>
+        </div>
+        <div class="heat-card risk-safe" data-risk="15">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>外科医生</h4>
+            <div class="heat-score">15%</div>
+            <p>精密手术和临床决策依赖专业经验</p>
+          </div>
+        </div>
+        <div class="heat-card risk-safe" data-risk="10">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>AI训练师</h4>
+            <div class="heat-score">10%</div>
+            <p>训练和调优AI模型的新兴核心岗位</p>
+          </div>
+        </div>
+        <div class="heat-card risk-safe" data-risk="8">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>创意总监</h4>
+            <div class="heat-score">8%</div>
+            <p>高层审美判断和品牌战略不可替代</p>
+          </div>
+        </div>
+        <div class="heat-card risk-safe" data-risk="5">
+          <div class="heat-risk-bar"></div>
+          <div class="heat-content">
+            <h4>企业家/创始人</h4>
+            <div class="heat-score">5%</div>
+            <p>愿景驱动和资源整合是人类独有优势</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="heatmap-insight animate-in">
+        <div class="insight-icon">💡</div>
+        <div>
+          <strong>关键洞察：</strong>
+          被替代风险最高的职业有两个共同特征：<em>高重复性</em> 和 <em>规则明确</em>。
+          而安全的职业往往需要 <em>创造力</em>、<em>共情能力</em> 或 <em>复杂的身体协调</em>。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: New Careers & Cases -->
+  <section id="newcareers" class="section section-newcareers">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-tag">03 — 新职业 & 赚钱案例</span>
+        <h2 class="section-title">AI时代的<span class="gradient-text">新机遇</span></h2>
+        <p class="section-desc">
+          每一次技术变革在消灭旧职业的同时，也会催生全新的工作方式。<br />
+          以下是正在发生的真实案例和新兴赛道。
+        </p>
+      </div>
+
+      <div class="careers-grid">
+        <!-- Career Card 1 -->
+        <div class="career-card animate-in">
+          <div class="career-card-glow"></div>
+          <div class="career-header">
+            <span class="career-emoji">🎯</span>
+            <div class="career-meta">
+              <span class="career-tag tag-hot">🔥 高需求</span>
+              <span class="career-income">月入 ¥20K-80K</span>
+            </div>
+          </div>
+          <h3 class="career-title">AI提示词工程师</h3>
+          <p class="career-desc">
+            为企业设计和优化AI提示词策略，提升大模型输出质量。
+            这是最先爆发的AI原生岗位之一。
+          </p>
+          <div class="career-case">
+            <div class="case-label">💰 真实案例</div>
+            <p>某自由职业者在Upwork上专精于Prompt优化，6个月内接单超过200个，月均收入$8,000+，客户复购率超60%。</p>
+          </div>
+        </div>
+
+        <!-- Career Card 2 -->
+        <div class="career-card animate-in">
+          <div class="career-card-glow"></div>
+          <div class="career-header">
+            <span class="career-emoji">🤖</span>
+            <div class="career-meta">
+              <span class="career-tag tag-hot">🔥 高需求</span>
+              <span class="career-income">月入 ¥30K-120K</span>
+            </div>
+          </div>
+          <h3 class="career-title">AI应用开发者</h3>
+          <p class="career-desc">
+            利用AI API和低代码平台快速构建行业解决方案。
+            不需要深度机器学习背景，会调用API即可入行。
+          </p>
+          <div class="career-case">
+            <div class="case-label">💰 真实案例</div>
+            <p>一名前英语教师转型为AI教育工具开发者，利用GPT API开发了一款英语口语练习App，上线3个月用户突破10万，月营收¥15万。</p>
+          </div>
+        </div>
+
+        <!-- Career Card 3 -->
+        <div class="career-card animate-in">
+          <div class="career-card-glow"></div>
+          <div class="career-header">
+            <span class="career-emoji">📹</span>
+            <div class="career-meta">
+              <span class="career-tag tag-growing">📈 快速增长</span>
+              <span class="career-income">月入 ¥10K-50K</span>
+            </div>
+          </div>
+          <h3 class="career-title">AI内容创作者</h3>
+          <p class="career-desc">
+            利用AI辅助创作文字、图片、视频内容，效率提升10倍。
+            一个人就能运营多个自媒体账号。
+          </p>
+          <div class="career-case">
+            <div class="case-label">💰 真实案例</div>
+            <p>一位95后利用AI写作+AI绘图，同时运营5个小红书账号、3个公众号，每月广告收入+带货佣金合计¥8万，团队仅自己1人。</p>
+          </div>
+        </div>
+
+        <!-- Career Card 4 -->
+        <div class="career-card animate-in">
+          <div class="career-card-glow"></div>
+          <div class="career-header">
+            <span class="career-emoji">🎓</span>
+            <div class="career-meta">
+              <span class="career-tag tag-growing">📈 快速增长</span>
+              <span class="career-income">月入 ¥15K-60K</span>
+            </div>
+          </div>
+          <h3 class="career-title">AI培训讲师</h3>
+          <p class="career-desc">
+            帮助企业和个人掌握AI工具使用方法。
+            企业AI培训市场正处于爆发前夜。
+          </p>
+          <div class="career-case">
+            <div class="case-label">💰 真实案例</div>
+            <p>前互联网运营经理转型AI培训师，在某知识付费平台推出"AI办公提效"课程，半年售出8000+份，总营收超¥200万。</p>
+          </div>
+        </div>
+
+        <!-- Career Card 5 -->
+        <div class="career-card animate-in">
+          <div class="career-card-glow"></div>
+          <div class="career-header">
+            <span class="career-emoji">🛡️</span>
+            <div class="career-meta">
+              <span class="career-tag tag-stable">🏢 企业刚需</span>
+              <span class="career-income">年薪 ¥40W-100W</span>
+            </div>
+          </div>
+          <h3 class="career-title">AI伦理与合规顾问</h3>
+          <p class="career-desc">
+            帮助企业制定AI使用规范，确保合规性和伦理标准。
+            随着AI监管法规出台，需求将持续增长。
+          </p>
+          <div class="career-case">
+            <div class="case-label">💰 真实案例</div>
+            <p>某律师事务所开设AI合规咨询业务线，首年营收超¥500万。团队核心成员均为法律+技术复合背景。</p>
+          </div>
+        </div>
+
+        <!-- Career Card 6 -->
+        <div class="career-card animate-in">
+          <div class="career-card-glow"></div>
+          <div class="career-header">
+            <span class="career-emoji">🧬</span>
+            <div class="career-meta">
+              <span class="career-tag tag-hot">🔥 蓝海赛道</span>
+              <span class="career-income">月入 ¥20K-100K</span>
+            </div>
+          </div>
+          <h3 class="career-title">个人AI顾问/OPC</h3>
+          <p class="career-desc">
+            一人公司模式，为中小企业和个人提供AI转型咨询服务。
+            低成本启动，利润率极高。
+          </p>
+          <div class="career-case">
+            <div class="case-label">💰 真实案例</div>
+            <p>一位前管理咨询顾问以"AI+职业发展"为切入点，通过个人品牌获客，半年积累200+付费客户，客单价¥3000-¥8000。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section section-contact">
+    <div class="container">
+      <div class="contact-wrapper animate-in">
+        <div class="contact-info">
+          <span class="section-tag">找到我</span>
+          <h2 class="section-title">开启你的<br /><span class="gradient-text">AI时代职业规划</span></h2>
+          <p class="contact-desc">
+            无论你是想评估现有职业风险，还是探索AI时代的新机会，
+            我都可以为你提供一对一的专业指导。
+          </p>
+          <div class="contact-features">
+            <div class="cf-item">
+              <span class="cf-icon">✅</span>
+              <span>一对一职业风险评估</span>
+            </div>
+            <div class="cf-item">
+              <span class="cf-icon">✅</span>
+              <span>AI时代转型路径规划</span>
+            </div>
+            <div class="cf-item">
+              <span class="cf-icon">✅</span>
+              <span>AI工具使用培训指导</span>
+            </div>
+            <div class="cf-item">
+              <span class="cf-icon">✅</span>
+              <span>个人品牌建设建议</span>
+            </div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-inner">
+            <div class="cc-avatar">
+              <span class="cc-avatar-text" id="avatar-text">OPC</span>
+            </div>
+            <!-- Editable name -->
+            <h3 class="cc-name">
+              <span id="display-name" class="editable-display">职业发展咨询师</span>
+              <input type="text" id="input-name" class="editable-input" placeholder="你的名字/称呼" style="display:none;" />
+            </h3>
+            <!-- Editable title -->
+            <p class="cc-title">
+              <span id="display-title" class="editable-display">AI时代 · 一人企业 · 职业导航</span>
+              <input type="text" id="input-title" class="editable-input editable-input-sm" placeholder="你的头衔/标语" style="display:none;" />
+            </p>
+            <div class="cc-divider"></div>
+            <div class="cc-info">
+              <div class="cc-info-item">
+                <span class="cc-info-icon">📧</span>
+                <span id="display-email" class="editable-display">your.email@example.com</span>
+                <input type="email" id="input-email" class="editable-input" placeholder="你的邮箱" style="display:none;" />
+              </div>
+              <div class="cc-info-item">
+                <span class="cc-info-icon">💬</span>
+                <span id="display-wechat" class="editable-display">微信：your_wechat_id</span>
+                <input type="text" id="input-wechat" class="editable-input" placeholder="微信号" style="display:none;" />
+              </div>
+              <div class="cc-info-item">
+                <span class="cc-info-icon">📱</span>
+                <span id="display-xiaohongshu" class="editable-display">小红书：@你的账号名</span>
+                <input type="text" id="input-xiaohongshu" class="editable-input" placeholder="小红书账号" style="display:none;" />
+              </div>
+              <div class="cc-info-item">
+                <span class="cc-info-icon">🌐</span>
+                <span id="display-gongzhonghao" class="editable-display">公众号：AI职业导航</span>
+                <input type="text" id="input-gongzhonghao" class="editable-input" placeholder="公众号名称" style="display:none;" />
+              </div>
+            </div>
+            <button class="btn btn-primary btn-full" id="edit-contact-btn">
+              ✏️ 编辑我的信息
+            </button>
+            <button class="btn btn-primary btn-full" id="save-contact-btn" style="display:none;">
+              ✅ 保存信息
+            </button>
+            <a href="#" class="btn btn-outline btn-full" id="contact-btn" style="margin-top:10px;">
+              立即预约咨询
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="logo-icon">◆</span> AI职业导航
+        </div>
+        <p class="footer-text">
+          © 2026 AI时代职业咨询 · 帮助每个人找到AI时代的新坐标
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
