@@ -40,6 +40,9 @@
   /* Transitions */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Touch Support */
+  --touch-target: 44px;
 }
 
 /* ===========================
@@ -289,9 +292,9 @@ img {
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-size: clamp(2.2rem, 8vw, 4.5rem);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.1;
   margin-bottom: 24px;
   letter-spacing: -0.02em;
 }
@@ -299,8 +302,9 @@ img {
 .gradient-text {
   background: var(--accent-gradient);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--accent-1); /* Fallback */
 }
 
 .hero-subtitle {
@@ -449,7 +453,7 @@ img {
 
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.8rem, 5vw, 3rem);
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 16px;
@@ -684,6 +688,29 @@ img {
 .heatmap-matrix-wrapper::-webkit-scrollbar-thumb {
   background: var(--accent-1);
   border-radius: 3px;
+}
+
+/* Scroll Hint for Mobile */
+.heatmap-matrix-wrapper::after {
+  content: '← 左右滑动查看完整数据 →';
+  display: none;
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .heatmap-matrix-wrapper {
+    margin-bottom: 40px;
+    padding-bottom: 1px;
+  }
+  .heatmap-matrix-wrapper::after {
+    display: block;
+  }
 }
 
 /* Matrix Table */
@@ -1444,19 +1471,20 @@ img {
 
 .modal-content {
   position: relative;
-  width: 90%;
+  width: 95%;
   max-width: 600px;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: 24px;
-  padding: 40px;
-  max-height: 90vh;
+  padding: clamp(24px, 5vw, 40px);
+  max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border);
   transform: scale(0.9) translateY(20px);
   transition: all 0.5s var(--ease-spring);
   scrollbar-width: thin;
   scrollbar-color: var(--accent-1) transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal.active .modal-content {
@@ -1703,7 +1731,21 @@ img {
 
 @media (max-width: 480px) {
   .timeline-card {
-    padding: 24px;
+    padding: 20px;
+  }
+
+  .timeline {
+    padding-left: 36px;
+  }
+
+  .timeline-dot {
+    left: -33px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .era-title {
+    font-size: 1.25rem;
   }
 
   .hero-stats {
@@ -1712,15 +1754,24 @@ img {
   }
 
   .contact-card-inner {
-    padding: 28px;
+    padding: 24px;
   }
 
   .heat-cell-value {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .detail-panel-inner {
-    padding: 16px;
+    padding: 12px;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    width: 100%;
+  }
+
+  .modal-title {
+    font-size: 1.4rem;
   }
 }
 
