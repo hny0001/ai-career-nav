@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   initEditableContact();
   initHeatmapMatrix();
+  initCareerCases();
   initAIPlanning();
 });
 
@@ -614,5 +615,134 @@ function initAIPlanning() {
   resetBtn.addEventListener('click', () => {
     qaResult.style.display = 'none';
     qaForm.style.display = 'block';
+  });
+}
+/* ===========================
+   Career Cases Modal Logic
+   =========================== */
+function initCareerCases() {
+  const modal = document.getElementById('case-modal');
+  const closeBtn = document.getElementById('modal-close');
+  const overlay = modal ? modal.querySelector('.modal-overlay') : null;
+  const cards = document.querySelectorAll('.career-card');
+
+  if (!modal || !closeBtn) return;
+
+  const caseData = {
+    'prompt-engineer': {
+      emoji: '🎯',
+      title: 'AI提示词工程师',
+      tag: '🔥 高需求',
+      tagClass: 'tag-hot',
+      income: '月入 ¥20K-80K',
+      detail: '某原本做文案策划的自由职业者，在2023年开始研究提示词工程。他在Upwork和Fiverr上提供Prompt优化服务，不仅帮企业写复杂的营销模板，还帮律所优化法律文书生成的提示词，通过标准化Prompt库实现了惊人的被动收入。',
+      business: '1. 计件收费：单个复杂Prompt $50-$200；<br>2. 顾问咨询：按小时收费或由企业月度续费；<br>3. 数字化资产：打包行业专用Prompt集在平台售卖。',
+      advice: ['学习基础大模型（LLM）底层逻辑与Tokens概念', '在主流Agent平台（如扣子/Dify）搭建并公开自己的智能体', '选择一个你熟悉的垂类行业（如医疗、法律、电商）深耕Prompt'],
+      boss: 'https://www.zhipin.com/web/geek/job?query=提示词工程师&city=101010100'
+    },
+    'ai-developer': {
+      emoji: '🤖',
+      title: 'AI应用开发者',
+      tag: '🔥 高需求',
+      tagClass: 'tag-hot',
+      income: '月入 ¥30K-120K',
+      detail: '一名前英语教师通过自学，利用Vercel + Next.js + OpenAI API，在一周内搭建了一款AI口语陪练App。通过抖音短视频引流，上线首月就积累了大量种子用户，并将API能力包装为会员制订阅服务。',
+      business: '1. 订阅制(SaaS)：按月度/年度会员收费；<br>2. 私有化部署：为中小企业通过低代码平台快速定制行业工具；<br>3. 流量转化：通过免费工具积累用户，导流至后端课程。',
+      advice: ['掌握Cursor、Replit等AI辅助编程神器，大幅降低开发门槛', '深入理解主流模型（GPT-4、Claude、DeepSeek）的API调用规范', '从解决身边的一个具体小痛点（如自动写总结、自动搜券）入手开发MVP'],
+      boss: 'https://www.zhipin.com/web/geek/job?query=AI开发工程师&city=101010100'
+    },
+    'ai-content': {
+      emoji: '📹',
+      title: 'AI内容创作者',
+      tag: '📈 快速增长',
+      tagClass: 'tag-growing',
+      income: '月入 ¥10K-50K',
+      detail: '一位95后创作者利用Midjourney生成配图，ChatGPT生成脚本，Sora/Runway生成分镜，一个人在半年内运营起5个矩阵号。每月接商业软文和佣金收入稳定在8万左右，效率是传统团队的10倍。',
+      business: '1. 平台流量分成与创作奖金；<br>2. 品牌定向短视频/文案营销推广；<br>3. AI数字人直播：低成本实现24小时不间断带货。',
+      advice: ['熟练掌握Midjourney/Stable Diffusion等头部绘图引擎', '建立一套属于自己的“AI+工作流”，实现多平台内容高频自动分发', '保持对各平台（小红书/抖音）最新算法与审美趋势的高度敏感'],
+      boss: 'https://www.zhipin.com/web/geek/job?query=AI内容运营&city=101010100'
+    },
+    'ai-trainer': {
+      emoji: '🎓',
+      title: 'AI培训讲师',
+      tag: '📈 快速增长',
+      tagClass: 'tag-growing',
+      income: '月入 ¥15K-60K',
+      detail: '前互联网公司运营经理，洞察到传统企业主对AI的焦虑。他在某知识付费平台推出『企业主AI减负实操课』，通过线下沙龙+线上督导的模式，半年创收200万以上。',
+      business: '1. 线上录播/直播课程售卖；<br>2. 线下高端转型集训营、私董会；<br>3. 为传统企业提供员工AI技能整体提升内训计划。',
+      advice: ['整理并打磨出至少10套跨行业、真实可提效的实战案例', '练习向“外行”讲解AI逻辑，将技术黑话转化为商业收益语言', '在公域平台（如视频号）建立自己的专家IP形象'],
+      boss: 'https://www.zhipin.com/web/geek/job?query=AI培训&city=101010100'
+    },
+    'ai-ethics': {
+      emoji: '🛡️',
+      title: 'AI伦理与合规顾问',
+      tag: '🏢 企业刚需',
+      tagClass: 'tag-stable',
+      income: '年薪 ¥40W-100W',
+      detail: '某顶尖律师事务所成立专门的AI合规中心。他们为大型企业提供AI生成内容的著作权风险判定、AI算法审计以及个人隐私协议合规性审查。首年业务量极其饱满。',
+      business: '1. 专项法律合规审计；<br>2. 担任科技企业常年法律/伦理顾问；<br>3. 合规培训服务：帮助企业避开AI侵权雷区。',
+      advice: ['深度研究全球主流AI监管政策（如欧盟AI法案、中国生成式AI条例）', '学习基础的数据安全、算法偏见与模型可解释性知识', '建议法律专业或信息安全相关背景的人士跨界深耕'],
+      boss: 'https://www.zhipin.com/web/geek/job?query=AI合规&city=101010100'
+    },
+    'personal-ai-consultant': {
+      emoji: '🧬',
+      title: '个人AI顾问/OPC',
+      tag: '🔥 蓝海赛道',
+      tagClass: 'tag-hot',
+      income: '月入 ¥20K-100K',
+      detail: '一位前麦肯锡资深顾问，现在担任多家高成长中小企业的『虚拟首席AI官』。他为企业重构HR、财会及法务流程。他不仅收取咨询费，还参与企业“提效部分”的利润分成。',
+      business: '1. 企业AI架构梳理费/入场费；<br>2. 价值分成：按节省的人力成本比例或效率提升收益提成；<br>3. 长期战略合伙：获得企业期权或原始股。',
+      advice: ['练就深刻的行业洞察力，能一眼看透传统流程中的低效环节', '熟练掌握Agent部署、RAG（知识库）搭建等企业级AI落地技术', '练就极强的商业沟通与PPT方案交付能力'],
+      boss: 'https://www.zhipin.com/web/geek/job?query=AI开发工程师&city=101010100'
+    }
+  };
+
+  const openModal = (caseId) => {
+    const data = caseData[caseId];
+    if (!data) return;
+
+    document.getElementById('modal-emoji').textContent = data.emoji;
+    document.getElementById('modal-title').textContent = data.title;
+    const tagEl = document.getElementById('modal-tag');
+    tagEl.textContent = data.tag;
+    tagEl.className = 'career-tag ' + data.tagClass;
+    document.getElementById('modal-income').textContent = data.income;
+    document.getElementById('modal-case-detail').textContent = data.detail;
+    document.getElementById('modal-business-model').innerHTML = data.business;
+    
+    const adviceList = document.getElementById('modal-startup-advice');
+    adviceList.innerHTML = '';
+    data.advice.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      adviceList.appendChild(li);
+    });
+
+    document.getElementById('modal-boss-link').href = data.boss;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const caseId = card.getAttribute('data-case-id');
+      if (caseId) openModal(caseId);
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+
+  // Esc key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
   });
 }
