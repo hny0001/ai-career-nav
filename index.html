@@ -636,9 +636,12 @@
 
         <!-- QA Result -->
         <div class="qa-result" id="ai-qa-result" style="display: none;">
-          <div class="qa-result-header">
-            <h3>📊 你的专属诊断报告</h3>
-            <button id="qa-reset-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.9rem;">重新评估</button>
+          <div class="qa-result-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <h3 style="margin: 0;">📊 你的专属诊断报告</h3>
+            <div>
+              <button id="qa-export-btn" class="btn btn-primary" style="padding: 6px 16px; font-size: 0.9rem; margin-right: 8px;">📥 导出 PDF</button>
+              <button id="qa-reset-btn" class="btn btn-outline" style="padding: 6px 16px; font-size: 0.9rem;">重新评估</button>
+            </div>
           </div>
           <div class="qa-result-body">
             <div class="qa-box">
@@ -708,23 +711,23 @@
             <div class="cc-info">
               <div class="cc-info-item">
                 <span class="cc-info-icon">📧</span>
-                <span id="display-email" class="editable-display">your.email@example.com</span>
-                <input type="email" id="input-email" class="editable-input" placeholder="你的邮箱" style="display:none;" />
+                <span id="display-email" class="editable-display">hny000000001@gmail.com</span>
+                <input type="email" id="input-email" class="editable-input" value="hny000000001@gmail.com" placeholder="你的邮箱" style="display:none;" />
               </div>
               <div class="cc-info-item">
                 <span class="cc-info-icon">💬</span>
-                <span id="display-wechat" class="editable-display">微信：your_wechat_id</span>
-                <input type="text" id="input-wechat" class="editable-input" placeholder="微信号" style="display:none;" />
+                <span id="display-wechat" class="editable-display">微信：18002237125</span>
+                <input type="text" id="input-wechat" class="editable-input" value="18002237125" placeholder="微信号" style="display:none;" />
               </div>
               <div class="cc-info-item">
                 <span class="cc-info-icon">📱</span>
-                <span id="display-xiaohongshu" class="editable-display">小红书：@你的账号名</span>
-                <input type="text" id="input-xiaohongshu" class="editable-input" placeholder="小红书账号" style="display:none;" />
+                <span id="display-xiaohongshu" class="editable-display">小红书：@看得见的AI</span>
+                <input type="text" id="input-xiaohongshu" class="editable-input" value="看得见的AI" placeholder="小红书账号" style="display:none;" />
               </div>
               <div class="cc-info-item">
                 <span class="cc-info-icon">🌐</span>
-                <span id="display-gongzhonghao" class="editable-display">公众号：AI职业导航</span>
-                <input type="text" id="input-gongzhonghao" class="editable-input" placeholder="公众号名称" style="display:none;" />
+                <span id="display-gongzhonghao" class="editable-display">公众号：看得见的AI</span>
+                <input type="text" id="input-gongzhonghao" class="editable-input" value="看得见的AI" placeholder="公众号名称" style="display:none;" />
               </div>
             </div>
             <button class="btn btn-primary btn-full" id="edit-contact-btn">
@@ -733,8 +736,8 @@
             <button class="btn btn-primary btn-full" id="save-contact-btn" style="display:none;">
               ✅ 保存信息
             </button>
-            <a href="#" class="btn btn-outline btn-full" id="contact-btn" style="margin-top:10px;">
-              立即预约咨询
+            <a href="javascript:void(0);" onclick="navigator.clipboard.writeText('18002237125'); const rawToast = document.createElement('div'); rawToast.textContent = '✅ 微信号 18002237125 已复制！'; rawToast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0984e3; color:#fff; padding:10px 20px; border-radius:8px; font-weight:bold; z-index:9999; animation: dropDownFade 2.5s forwards;'; document.body.appendChild(rawToast); setTimeout(()=>rawToast.remove(), 2500);" class="btn btn-outline btn-full" id="contact-btn" style="margin-top:10px;">
+              立即预约咨询 (加微信: 18002237125)
             </a>
           </div>
         </div>
@@ -755,7 +758,11 @@
       </div>
     </div>
   </footer>
+  <div style="width: 0; height: 0; overflow: hidden;">
+    <div id="frontend-report-print-area" style="width: 800px; padding: 40px; background: #fff; color: #333; box-sizing: border-box;"></div>
+  </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

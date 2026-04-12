@@ -174,10 +174,10 @@ function initEditableContact() {
   const fields = {
     name:          { prefix: '',       defaultVal: '职业发展咨询师' },
     title:         { prefix: '',       defaultVal: 'AI时代 · 一人企业 · 职业导航' },
-    email:         { prefix: '',       defaultVal: 'your.email@example.com' },
-    wechat:        { prefix: '微信：', defaultVal: 'your_wechat_id' },
-    xiaohongshu:   { prefix: '小红书：@', defaultVal: '你的账号名' },
-    gongzhonghao:  { prefix: '公众号：', defaultVal: 'AI职业导航' }
+    email:         { prefix: '',       defaultVal: 'hny000000001@gmail.com' },
+    wechat:        { prefix: '微信：', defaultVal: '18002237125' },
+    xiaohongshu:   { prefix: '小红书：@', defaultVal: '看得见的AI' },
+    gongzhonghao:  { prefix: '公众号：', defaultVal: '看得见的AI' }
   };
 
   const editBtn = document.getElementById('edit-contact-btn');
@@ -236,7 +236,26 @@ function initEditableContact() {
     editBtn.style.display = 'block';
     saveBtn.style.display = 'none';
     contactBtn.style.display = 'inline-flex';
-    contactBtn.href = 'mailto:' + data.email;
+    
+    if (data.wechat) {
+      contactBtn.innerHTML = `立即预约咨询 (加微信: ${data.wechat})`;
+      contactBtn.href = 'javascript:void(0);';
+      contactBtn.onclick = () => {
+        navigator.clipboard.writeText(data.wechat);
+        toast.textContent = `✅ 微信号 ${data.wechat} 已复制！`;
+        toast.style.background = '#0984e3';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(-50%) translateY(-20px)';
+        }, 2500);
+      };
+    } else if (data.email) {
+      contactBtn.innerHTML = `立即预约咨询`;
+      contactBtn.href = 'mailto:' + data.email;
+      contactBtn.onclick = null;
+    }
 
     if (data.name) {
       const avatarText = document.getElementById('avatar-text');
@@ -262,7 +281,25 @@ function initEditableContact() {
           if (display) display.textContent = fields[key].prefix + data[key];
         }
       });
-      if (data.email) contactBtn.href = 'mailto:' + data.email;
+      if (data.wechat) {
+        contactBtn.innerHTML = `立即预约咨询 (加微信: ${data.wechat})`;
+        contactBtn.href = 'javascript:void(0);';
+        contactBtn.onclick = () => {
+          navigator.clipboard.writeText(data.wechat);
+          toast.textContent = `✅ 微信号 ${data.wechat} 已复制！`;
+          toast.style.background = '#0984e3';
+          toast.style.opacity = '1';
+          toast.style.transform = 'translateX(-50%) translateY(0)';
+          setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-50%) translateY(-20px)';
+          }, 2500);
+        };
+      } else if (data.email) {
+        contactBtn.innerHTML = `立即预约咨询`;
+        contactBtn.href = 'mailto:' + data.email;
+        contactBtn.onclick = null;
+      }
       if (data.name) {
         const avatarText = document.getElementById('avatar-text');
         if (avatarText) avatarText.textContent = data.name.charAt(0).toUpperCase();
@@ -449,80 +486,130 @@ function initAIPlanning() {
     btnText.textContent = '🚀 数据分析并同步至云端...';
     
     try {
-      await fetch('http://localhost:3000/api/consultations', {
+      const apiRes = await fetch('http://localhost:5000/api/consultations', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer_name, customer_contact, industry, role,
-          work_content: content, work_env: env, risk_score: '评估中'
+          work_content: content, work_env: env
         })
       });
-    } catch(err) {
-      console.warn('Backend logging failed', err);
-    }
-    
-    setTimeout(() => {
+      const resData = await apiRes.json();
+      
       qaForm.style.display = 'none';
       qaResult.style.display = 'block';
-      
-      const roleLower = role.toLowerCase();
-      let riskPct = '45%-65%';
-      let riskDesc = '你的日常工作如果重复度高，将面临明显的被替代风险。需要探索管理和综合性创新。';
-      let pathDesc = '核心方向：从“执行者”提升为“决策者”。不要和机器拼效率。';
-      let actionDesc = '1. 识别并借力AI工具 \n2. 深入理解业务 \n3. 增强沟通协作与情绪价值。';
-      
-      if (roleLower.includes('产品') || roleLower.includes('pm')) {
-        riskPct = '30%-40%';
-        riskDesc = '商业洞察和规划能力不易被机器取代，但是原型制作、需求文档等繁杂琐事将被颠覆。';
-        pathDesc = '向“创新商业模式操盘手”转型，用AI解决画图与文档，自身聚焦真正的产品战略逻辑。';
-        actionDesc = '1. 引入AI协作提升PRD产出效率\n2. 学习AI接口(LLM API)能力边界用于新的产品架构设计';
-      } else if (roleLower.includes('运维') || roleLower.includes('sre') || roleLower.includes('devops')) {
-        riskPct = '40%-60%';
-        riskDesc = '常规的报警处理和资源调配正在被 AIOps 逐步自动化，但在高可用架构设计与排障上仍是刚需。';
-        pathDesc = '从“服务器保姆”向“云原生及AI算力架构师”转型。';
-        actionDesc = '1. 学习GPU集群与算力管理\n2. 深入 Kubernetes 与自动化自愈架构\n3. 结合大模型做内部的智能运维Agent';
-      } else if (roleLower.includes('运营') || roleLower.includes('活动') || roleLower.includes('用户运营')) {
-        riskPct = '50%-75%';
-        riskDesc = '基础的内容分发、社群维护、客服解答等重复率极高的工作将面临洗牌。';
-        pathDesc = '成为“超级个体”或掌握私域变现核心的“增长黑客”。利用AI将运营产能放大10倍。';
-        actionDesc = '1. 全面拥抱AI绘画与写作工具，独自撑起千万阅读量的矩阵\n2. 关注心智管理与真实用户情绪价值，做具有“人情味”的运营';
-      } else if (roleLower.includes('设计') || roleLower.includes('ui') || roleLower.includes('视觉')) {
-        riskPct = '60%-80%';
-        riskDesc = '纯基础视觉和图标输出已被 Midjourney 及海量自动化出图工具全面压制。';
-        pathDesc = '向“多模态交互设计师体系”转变，专注在产品的立体体验与故事感呈现。';
-        actionDesc = '1. 将AI出图作为灵感和物料获取核心手段\n2. 将节省的时间投入到用户心理学、动效交互(HCI)上';
-      } else if (roleLower.includes('数据') || roleLower.includes('分析')) {
-        riskPct = '50%-60%';
-        riskDesc = '取数、清理、普通报表等正在被各类 Copilot 一句话搞定。如果仅是 SQL 机器，处境堪忧。';
-        pathDesc = '往上做“数据战略智囊”，往深做“核心数据流架构”。';
-        actionDesc = '1. 基于大模型搭建可交互的智能BI\n2. 切入到具体的商业闭环，成为能直接帮公司省钱赚钱的增长谋士';
-      } else if (roleLower.includes('测试') || roleLower.includes('qa')) {
-        riskPct = '80%-90%';
-        riskDesc = '由于高度的规范化和逻辑可追溯性，传统的纯手工以及基于规则的自动化回归极易被全盘取代。';
-        pathDesc = '往后延展转型为“AI模型可解释性评测专家”或深耕安全、性能极限领域。';
-        actionDesc = '1. 拥抱各种 AI 引领的代码级自动分析扫描工具\n2. 深入理解大模型架构，针对其幻觉现象建立新型测评方案';
-      } else if (roleLower.includes('算法') || roleLower.includes('ai') || roleLower.includes('大模型')) {
-        riskPct = '5%-15%';
-        riskDesc = '这本身就是驾驭 AI 的岗位，被替代的可能非常低，且极度紧缺。面临的其实是技能迭代极快所带来的内部焦虑。';
-        pathDesc = '持续做深，或者向“AI落地架构师”和“行业解决方案专家”延伸。';
-        actionDesc = '1. 快速跟进最新的学术Paper以及开源模型动向\n2. 不要只埋头看模型结构，多跟产品和业务沟通找到实际落地场景';
-      } else if (roleLower.includes('研发') || roleLower.includes('开发') || roleLower.includes('前端') || roleLower.includes('后端') || roleLower.includes('程序员')) {
-        riskPct = '50%-70%';
-        riskDesc = '大批量的初中级代码编写（CRUD）将被 AI 甚至不再需要代码的产品直接接管，纯开发岗位收缩压力大。';
-        pathDesc = '摆脱码农思维，转向“系统工程师”或者自带商业闭环思维的“AI全栈工程师”。';
-        actionDesc = '1. 利用 GitHub Copilot 等工具把开发速度提上去\n2. 自己独立利用AI将一个想法做出 MVP 并部署测试';
-      }
 
-      document.getElementById('res-risk').innerHTML = `<p><strong>风险评估级别：${riskPct}</strong><br/>${riskDesc}</p>`;
+      let riskPct = '未知';
+      let riskDesc = '暂无明确诊断';
+      let pathDesc = '请联系咨询师';
+      let actionDesc = '无行动点建议';
+
+      if (resData.aiReport) {
+        riskPct = resData.aiReport.riskPct || riskPct;
+        riskDesc = resData.aiReport.riskDesc || riskDesc;
+        pathDesc = resData.aiReport.pathDesc || pathDesc;
+        actionDesc = resData.aiReport.actionDesc || actionDesc;
+      }
+      
+      // 添加少许前置动态语境增强对话感
+      let personalizedRisk = `<strong>基于 AI 引擎对您在【${industry}】行业【${role}】岗位的深度运算：</strong><br/>`;
+      riskDesc = personalizedRisk + '<br/>' + riskDesc;
+
+      document.getElementById('res-risk').innerHTML = `<p><strong>风险评估极值：${riskPct}</strong><br/><br/>${riskDesc}</p>`;
       document.getElementById('res-path').innerHTML = `<p>${pathDesc}</p>`;
       document.getElementById('res-action').innerHTML = `<p style="white-space: pre-wrap;">${actionDesc}</p>`;
 
+      const ctaHtml = `
+        <div style="background:#f5f7ff; border-left:4px solid var(--accent-1); padding:16px; margin-top:24px; border-radius:4px;">
+          <h4 style="color:var(--accent-1); margin-top:0; margin-bottom:8px; font-size:1.1em;">👑 获取深度专属方案</h4>
+          <p style="font-size:0.95em; color:var(--text-secondary); margin:0 0 16px 0; line-height:1.6;">
+            上述是由 AI 引擎根据您的碎片信息分析生成的系统诊断。想要根据您个人完整履历获取更量身定制的<strong>“1对1职业转型图谱”</strong>，或购买完整落地的<strong>“破局实施方案”</strong>？
+          </p>
+          <a href="#contact" onclick="document.getElementById('qa-reset-btn').click();" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9em; text-decoration: none;">💬 立即联系职业咨询师</a>
+        </div>
+      `;
+      let existingCta = document.getElementById('ai-cta-box');
+      if (!existingCta) {
+        let ctaDiv = document.createElement('div');
+        ctaDiv.id = 'ai-cta-box';
+        ctaDiv.innerHTML = ctaHtml;
+        qaResult.appendChild(ctaDiv);
+      } else {
+        existingCta.innerHTML = ctaHtml;
+      }
+
       planBtn.disabled = false;
       btnText.textContent = '生成我的诊断报告';
-    }, 800);
+      
+      window.latestReportData = {
+        name: customer_name, industry: industry, role: role, content: content, env: env,
+        riskPct: riskPct, riskDesc: riskDesc, pathDesc: pathDesc, actionDesc: actionDesc
+      };
+      
+    } catch(err) {
+      console.warn('Backend logging failed', err);
+      alert('服务请求失败，请确保后台 5000 端口服务正在运行且允许连接。');
+      planBtn.disabled = false;
+      btnText.textContent = '生成我的诊断报告';
+    }
   });
+
+  const exportBtn = document.getElementById('qa-export-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      if (!window.latestReportData) return;
+      const d = window.latestReportData;
+      const printArea = document.getElementById('frontend-report-print-area');
+      printArea.innerHTML = `
+        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px;">
+          <h1 style="margin: 0; font-size: 2rem; color: #333; font-family: sans-serif;">AI 时代职业导航 - 专属职业诊断报告</h1>
+          <p style="margin: 8px 0 0 0; color: #666; font-size: 0.9rem;">生成时间: ${new Date().toLocaleString()}</p>
+        </div>
+        <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 评估姓名：</strong>${d.name || '匿名用户'}</p>
+        <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 所属行业：</strong>${d.industry || '-'}</p>
+        <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 当前岗位：</strong>${d.role || '-'}</p>
+        
+        <div style="background: #fff3e0; padding: 20px; border-left: 6px solid #ff9800; margin: 30px 0; border-radius: 4px; font-family: sans-serif;">
+          <h3 style="margin-top: 0; color: #e65100; font-size: 1.4rem;">⚠️ AI 替代风险极值评估：${d.riskPct}</h3>
+          <p style="margin: 0; color: #424242; font-size: 1.1rem; line-height: 1.7;">${d.riskDesc}</p>
+        </div>
+        
+        <h3 style="color: #1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 8px; margin-top: 35px; font-size: 1.3rem; font-family: sans-serif;">🚀 推荐转型路径</h3>
+        <p style="font-size: 1.1rem; line-height: 1.7; color: #333; font-family: sans-serif;">${d.pathDesc}</p>
+        
+        <h3 style="color: #388e3c; border-bottom: 2px solid #388e3c; padding-bottom: 8px; margin-top: 35px; font-size: 1.3rem; font-family: sans-serif;">🎯 核心破局行动点</h3>
+        <p style="font-size: 1.1rem; line-height: 1.9; color: #333; font-family: sans-serif; white-space: pre-wrap;">${d.actionDesc}</p>
+        
+        <div style="background:#f5f7ff; border-left:5px solid #4e54c8; padding:20px; margin-top:50px; border-radius:6px; font-family: sans-serif;">
+          <h4 style="color:#4e54c8; margin-top:0; margin-bottom:12px; font-size:1.2rem;">👑 获取深度定制实施方案</h4>
+          <p style="font-size:1.05rem; color:#444; margin:0 0 20px 0; line-height:1.7;">
+            上述仅为平台基础模型的初步分析。若想根据您的真实履历和职场瓶颈获取量身定制的<strong>“1对1职业转型图谱”</strong>，或购买完整落地的<strong>“破局实施方案”</strong>？
+          </p>
+          <p style="font-weight:bold; color:#d32f2f; margin:0; font-size:1.15rem;">💬 欢迎向下滑动网页，联系您的专属职业发展咨询师开启破局之旅！</p>
+        </div>
+        <div style="margin-top: 50px; text-align: center; font-size: 0.9rem; color: #999; font-family: sans-serif;">
+          -- 报告由 AI Career Nav 自动生成 --
+        </div>
+      `;
+      
+      const opt = {
+        margin:       15,
+        filename:     `职业诊断报告_${d.role || '未命名'}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      const btnOrigText = exportBtn.textContent;
+      exportBtn.textContent = '稍等片刻...';
+      exportBtn.disabled = true;
+      
+      html2pdf().set(opt).from(printArea).save().then(() => {
+        exportBtn.textContent = btnOrigText;
+        exportBtn.disabled = false;
+      });
+    });
+  }
 
   resetBtn.addEventListener('click', () => {
     qaResult.style.display = 'none';

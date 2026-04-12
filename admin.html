@@ -95,7 +95,26 @@
       color: #2e7d32;
       font-size: 0.8rem;
     }
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+    }
+    .modal.show { display: flex; }
+    .modal-content {
+      background: #fff; padding: 24px; border-radius: 8px; width: 800px; max-width: 90%; max-height: 90vh;
+      overflow-y: auto; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 24px; cursor: pointer; font-size: 1.5rem; color: #666;
+    }
+    .btn-export {
+      background: var(--primary); color: white; border: none; padding: 10px 20px; 
+      border-radius: 4px; cursor: pointer; font-size: 1rem; margin-top: 24px; display: block; width: 100%;
+    }
+    .btn-export:hover { opacity: 0.9; }
+    .report-container { padding: 30px; border: 1px solid #eee; margin-top: 16px; min-height: 400px; }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -128,6 +147,7 @@
             <th>工作内容 & 职场环境</th>
             <th>AI系统诊断风险分</th>
             <th>咨询时间</th>
+            <th>操作</th>
           </tr>
         </thead>
         <tbody id="consult-tbody">
@@ -155,9 +175,17 @@
       </table>
     </div>
   </div>
+  <div class="modal" id="report-modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeReport()">&times;</span>
+      <h2 style="margin-top: 0;">评估报告预览</h2>
+      <div id="report-print-area" class="report-container"></div>
+      <button class="btn-export" onclick="exportPDF()">📥 导出 PDF 报告</button>
+    </div>
+  </div>
 
   <script>
-    const API_BASE = 'http://localhost:3000/api';
+    const API_BASE = 'http://localhost:5000/api';
 
     async function fetchData() {
       try {
@@ -174,6 +202,7 @@
         document.getElementById('stat-customers').textContent = summary.totalCustomers;
         document.getElementById('stat-revenue').textContent = '¥ ' + (summary.totalRevenue || 0).toFixed(2);
 
+        window.consultData = consults;
         const consultTbody = document.getElementById('consult-tbody');
         consultTbody.innerHTML = consults.map(c => `
           <tr>
@@ -184,9 +213,10 @@
             <td><div style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${c.work_content || ''} | ${c.work_env || ''}">${c.work_content || ''} | ${c.work_env || ''}</div></td>
             <td>${c.risk_score}</td>
             <td>${new Date(c.created_at).toLocaleString()}</td>
+            <td><button class="badge" style="border:none;cursor:pointer;background:#e3f2fd;color:#1565c0;" onclick="viewReport(${c.id})">📄 报告</button></td>
           </tr>
         `).join('');
-        if (consults.length === 0) consultTbody.innerHTML = '<tr><td colspan="7">暂无咨询记录</td></tr>';
+        if (consults.length === 0) consultTbody.innerHTML = '<tr><td colspan="8">暂无咨询记录</td></tr>';
 
         const billingTbody = document.getElementById('billing-tbody');
         billingTbody.innerHTML = bills.map(b => `
@@ -207,6 +237,107 @@
     }
 
     fetchData();
+
+    function viewReport(id) {
+      const c = window.consultData.find(x => x.id === id);
+      if (!c) return;
+      
+      const roleLower = (c.role || '').toLowerCase();
+      let riskPct = '45%-65%';
+      let riskDesc = '你的日常工作如果重复度高，将面临明显的被替代风险。需要探索管理和综合性创新。';
+      let pathDesc = '核心方向：从“执行者”提升为“决策者”。不要和机器拼效率。';
+      let actionDesc = '1. 识别并借力AI工具 <br>2. 深入理解业务 <br>3. 增强沟通协作与情绪价值。';
+      
+      if (roleLower.includes('产品') || roleLower.includes('pm')) {
+        riskPct = '30%-40%';
+        riskDesc = '商业洞察和规划能力不易被机器取代，但是原型制作、需求文档等繁杂琐事将被颠覆。';
+        pathDesc = '向“创新商业模式操盘手”转型，用AI解决画图与文档，自身聚焦真正的产品战略逻辑。';
+        actionDesc = '1. 引入AI协作提升PRD产出效率<br>2. 学习AI接口(LLM API)能力边界用于新的产品架构设计';
+      } else if (roleLower.includes('运维') || roleLower.includes('sre') || roleLower.includes('devops')) {
+        riskPct = '40%-60%';
+        riskDesc = '常规的报警处理和资源调配正在被 AIOps 逐步自动化，但在高可用架构设计与排障上仍是刚需。';
+        pathDesc = '从“服务器保姆”向“云原生及AI算力架构师”转型。';
+        actionDesc = '1. 学习GPU集群与算力管理<br>2. 深入 Kubernetes 与自动化自愈架构<br>3. 结合大模型做内部的智能运维Agent';
+      } else if (roleLower.includes('运营') || roleLower.includes('活动') || roleLower.includes('用户运营')) {
+        riskPct = '50%-75%';
+        riskDesc = '基础的内容分发、社群维护、客服解答等重复率极高的工作将面临洗牌。';
+        pathDesc = '成为“超级个体”或掌握私域变现核心的“增长黑客”。利用AI将运营产能放大10倍。';
+        actionDesc = '1. 全面拥抱AI绘画与写作工具，独自撑起千万阅读量的矩阵<br>2. 关注心智管理与真实用户情绪价值，做具有“人情味”的运营';
+      } else if (roleLower.includes('设计') || roleLower.includes('ui') || roleLower.includes('视觉')) {
+        riskPct = '60%-80%';
+        riskDesc = '纯基础视觉和图标输出已被 Midjourney 及海量自动化出图工具全面压制。';
+        pathDesc = '向“多模态交互设计师体系”转变，专注在产品的立体体验与故事感呈现。';
+        actionDesc = '1. 将AI出图作为灵感和物料获取核心手段<br>2. 将节省的时间投入到用户心理学、动效交互(HCI)上';
+      } else if (roleLower.includes('数据') || roleLower.includes('分析')) {
+        riskPct = '50%-60%';
+        riskDesc = '取数、清理、普通报表等正在被各类 Copilot 一句话搞定。如果仅是 SQL 机器，处境堪忧。';
+        pathDesc = '往上做“数据战略智囊”，往深做“核心数据流架构”。';
+        actionDesc = '1. 基于大模型搭建可交互的智能BI<br>2. 切入到具体的商业闭环，成为能直接帮公司省钱赚钱的增长谋士';
+      } else if (roleLower.includes('测试') || roleLower.includes('qa')) {
+        riskPct = '80%-90%';
+        riskDesc = '由于高度的规范化和逻辑可追溯性，传统的纯手工以及基于规则的自动化回归极易被全盘取代。';
+        pathDesc = '往后延展转型为“AI模型可解释性评测专家”或深耕安全、性能极限领域。';
+        actionDesc = '1. 拥抱各种 AI 引领的代码级自动分析扫描工具<br>2. 深入理解大模型架构，针对其幻觉现象建立新型测评方案';
+      } else if (roleLower.includes('算法') || roleLower.includes('ai') || roleLower.includes('大模型')) {
+        riskPct = '5%-15%';
+        riskDesc = '这本身就是驾驭 AI 的岗位，被替代的可能非常低，且极度紧缺。面临的其实是技能迭代极快所带来的内部焦虑。';
+        pathDesc = '持续做深，或者向“AI落地架构师”和“行业解决方案专家”延伸。';
+        actionDesc = '1. 快速跟进最新的学术Paper以及开源模型动向<br>2. 不要只埋头看模型结构，多跟产品和业务沟通找到实际落地场景';
+      } else if (roleLower.includes('研发') || roleLower.includes('开发') || roleLower.includes('前端') || roleLower.includes('后端') || roleLower.includes('程序员')) {
+        riskPct = '50%-70%';
+        riskDesc = '大批量的初中级代码编写（CRUD）将被 AI 甚至不再需要代码的产品直接接管，纯开发岗位收缩压力大。';
+        pathDesc = '摆脱码农思维，转向“系统工程师”或者自带商业闭环思维的“AI全栈工程师”。';
+        actionDesc = '1. 利用 GitHub Copilot 等工具把开发速度提上去<br>2. 自己独立利用AI将一个想法做出 MVP 并部署测试';
+      }
+
+      document.getElementById('report-print-area').innerHTML = `
+        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 1.8rem; color: #333;">AI 时代职业导航 - 专属诊断报告</h1>
+          <p style="margin: 5px 0 0 0; color: #666;">生成时间: ${new Date().toLocaleString()}</p>
+        </div>
+        <p style="font-size: 1.05rem;"><strong>👉 客户姓名：</strong>${c.customer_name || '匿名用户'}</p>
+        <p style="font-size: 1.05rem;"><strong>👉 所属行业：</strong>${c.industry || '-'}</p>
+        <p style="font-size: 1.05rem;"><strong>👉 评估岗位：</strong>${c.role || '-'}</p>
+        <div style="background: #fff3e0; padding: 16px; border-left: 5px solid #ff9800; margin: 24px 0; border-radius: 4px;">
+          <h3 style="margin-top: 0; color: #e65100; font-size: 1.3rem;">⚠️ AI 替代风险评估：${riskPct}</h3>
+          <p style="margin: 0; color: #424242; font-size: 1.05rem; line-height: 1.6;">${riskDesc}</p>
+        </div>
+        <h3 style="color: #1976d2; border-bottom: 1px solid #1976d2; padding-bottom: 8px; margin-top: 32px;">🚀 推荐转型路径</h3>
+        <p style="font-size: 1.05rem; line-height: 1.6; color: #333;">${pathDesc}</p>
+        <h3 style="color: #388e3c; border-bottom: 1px solid #388e3c; padding-bottom: 8px; margin-top: 32px;">🎯 核心破局行动点</h3>
+        <p style="font-size: 1.05rem; line-height: 1.8; color: #333;">${actionDesc}</p>
+        
+        <div style="background:#f5f7ff; border-left:4px solid #4e54c8; padding:16px; margin-top:32px; border-radius:4px;">
+          <h4 style="color:#4e54c8; margin-top:0; margin-bottom:8px; font-size:1.1em;">👑 获取深度专属方案</h4>
+          <p style="font-size:0.95em; color:#666; margin:0 0 16px 0; line-height:1.6;">
+            上述仅为机器基于岗位通用特征生成的初步系统诊断。想要根据客户具体的真实履历和职场瓶颈获取量身定制的<strong>“1对1职业转型路径规划”</strong>，或购买完整落地的<strong>“破局实施方案”</strong>？
+          </p>
+          <p style="font-weight:bold; color:#d32f2f; margin:0;">💬 欢迎随时联系您的职业发展专属咨询师，开启闭门深度咨询！</p>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center; font-size: 0.85rem; color: #999;">
+          -- 报告由 AI Career Nav 业务管理后台自动生成 --
+        </div>
+      `;
+      document.getElementById('report-modal').classList.add('show');
+    }
+
+    function closeReport() {
+      document.getElementById('report-modal').classList.remove('show');
+    }
+
+    function exportPDF() {
+      const element = document.getElementById('report-print-area');
+      const filename = 'AI职业诊断报告.pdf';
+      const opt = {
+        margin:       15,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
   </script>
 </body>
 </html>
