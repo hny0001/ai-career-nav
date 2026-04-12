@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI职业导航 - 业务管理后台</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --primary: #4e54c8;
+      --text: #333;
+      --text-muted: #666;
+      --border: #e0e0e0;
+    }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 24px;
+    }
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 8px;
+      flex: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .stat-card h3 {
+      margin: 0 0 8px 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .stat-card .val {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .panel {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .panel h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    th {
+      background: #fdfdfd;
+      color: var(--text-muted);
+    }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>💼 AI职业导航服务后台</h1>
+    <a href="/index.html" style="color: white; text-decoration: none; font-size: 0.9rem;">返回前台官网</a>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <h3>总客户数 / 咨询数</h3>
+        <div class="val" id="stat-customers">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>总营业额 (RMB)</h3>
+        <div class="val" id="stat-revenue">-</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>🧑‍💼 客户与咨询记录</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>客户姓名</th>
+            <th>联系方式</th>
+            <th>行业 / 岗位</th>
+            <th>工作内容 & 职场环境</th>
+            <th>AI系统诊断风险分</th>
+            <th>咨询时间</th>
+          </tr>
+        </thead>
+        <tbody id="consult-tbody">
+          <tr><td colspan="7">加载中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>🧾 账单信息</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>订单号</th>
+            <th>客户姓名</th>
+            <th>服务金额</th>
+            <th>服务类型</th>
+            <th>状态</th>
+            <th>结算时间</th>
+          </tr>
+        </thead>
+        <tbody id="billing-tbody">
+          <tr><td colspan="6">加载中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000/api';
+
+    async function fetchData() {
+      try {
+        const [summaryRes, consultRes, billingRes] = await Promise.all([
+          fetch(API_BASE + '/summary'),
+          fetch(API_BASE + '/consultations'),
+          fetch(API_BASE + '/billing')
+        ]);
+        
+        const summary = await summaryRes.json();
+        const consults = await consultRes.json();
+        const bills = await billingRes.json();
+
+        document.getElementById('stat-customers').textContent = summary.totalCustomers;
+        document.getElementById('stat-revenue').textContent = '¥ ' + (summary.totalRevenue || 0).toFixed(2);
+
+        const consultTbody = document.getElementById('consult-tbody');
+        consultTbody.innerHTML = consults.map(c => `
+          <tr>
+            <td>${c.id}</td>
+            <td><strong>${c.customer_name || '未填'}</strong></td>
+            <td>${c.customer_contact || '未填'}</td>
+            <td>${c.industry || '-'} <br> <span style="color:#666;font-size:0.8rem">${c.role || '-'}</span></td>
+            <td><div style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${c.work_content || ''} | ${c.work_env || ''}">${c.work_content || ''} | ${c.work_env || ''}</div></td>
+            <td>${c.risk_score}</td>
+            <td>${new Date(c.created_at).toLocaleString()}</td>
+          </tr>
+        `).join('');
+        if (consults.length === 0) consultTbody.innerHTML = '<tr><td colspan="7">暂无咨询记录</td></tr>';
+
+        const billingTbody = document.getElementById('billing-tbody');
+        billingTbody.innerHTML = bills.map(b => `
+          <tr>
+            <td>#${10000 + b.id}</td>
+            <td>${b.customer_name}</td>
+            <td>¥ ${(b.amount || 0).toFixed(2)}</td>
+            <td>${b.service_type}</td>
+            <td><span class="badge">${b.status}</span></td>
+            <td>${new Date(b.created_at).toLocaleString()}</td>
+          </tr>
+        `).join('');
+        if (bills.length === 0) billingTbody.innerHTML = '<tr><td colspan="6">暂无账单</td></tr>';
+
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
