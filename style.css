@@ -1200,190 +1200,192 @@ img {
 }
 
 /* ===========================
-   Contact Section
+   Section 4: Contact & Pricing (Google One Style)
    =========================== */
 .section-contact {
-  background: var(--bg-secondary);
+  background: #f8f9fa;
+  color: #3c4043;
+  padding: 100px 0;
 }
 
-.contact-wrapper {
+[data-theme="dark"] .section-contact {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.pricing-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 80px;
 }
 
-.contact-desc {
-  font-size: 1.05rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  margin: 20px 0 32px;
-}
-
-.contact-features {
-  display: grid;
-  gap: 16px;
-}
-
-.cf-item {
+.pricing-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 32px;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-}
-
-.cf-icon {
-  font-size: 1.1rem;
-}
-
-.contact-card {
-  position: relative;
-}
-
-.contact-card-inner {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: 20px;
-  padding: 40px;
-  text-align: center;
+  flex-direction: column;
+  transition: all 0.3s var(--ease-out);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+  border: 1px solid transparent;
 }
 
-.contact-card-inner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--accent-gradient);
+[data-theme="dark"] .pricing-card {
+  background: var(--bg-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-.cc-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--accent-gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  box-shadow: 0 8px 32px var(--accent-glow);
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 4px 4px rgba(60,64,67,.3), 0 8px 12px 6px rgba(60,64,67,.15);
 }
 
-.cc-avatar-text {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: white;
+.pricing-card.selected {
+  border: 2px solid var(--accent-1);
 }
 
-.cc-name {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
+/* Plan Colors */
+.card-basic::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #4285f4; }
+.card-pro::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(90deg, #4285f4, #ea4335, #fbbc05, #34a853); }
+.card-premium::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #fbbc05; }
 
-.cc-title {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.pricing-header {
   margin-bottom: 24px;
 }
 
-.cc-divider {
-  width: 60px;
-  height: 2px;
-  background: var(--accent-gradient);
-  margin: 0 auto 24px;
-  border-radius: 2px;
-}
-
-.cc-info {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 28px;
-  text-align: left;
-}
-
-.cc-info-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.cc-info-icon {
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-/* Editable Contact Fields */
-.editable-input {
-  width: 100%;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  outline: none;
-  transition: all 0.3s var(--ease-out);
-}
-
-.editable-input:focus {
-  border-color: var(--accent-1);
-  background: rgba(108, 92, 231, 0.08);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
-}
-
-.editable-input::placeholder {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.editable-input-sm {
-  font-size: 0.82rem;
-  padding: 6px 12px;
-}
-
-.cc-name .editable-input {
-  font-size: 1.15rem;
+.pricing-name {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: 600;
+  margin-bottom: 8px;
+  color: inherit;
+}
+
+.pricing-price {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: baseline;
+}
+
+.pricing-price .currency { font-size: 1.2rem; margin-right: 4px; }
+.pricing-price .period { font-size: 1rem; color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+
+.pricing-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  min-height: 3rem;
+}
+
+.pricing-features {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  flex-grow: 1;
+}
+
+.pricing-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  color: inherit;
+}
+
+.pricing-feature.disabled {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.pricing-btn {
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
   text-align: center;
+  border: 1px solid #dadce0;
+  background: white;
+  color: #1a73e8;
+  cursor: pointer;
 }
 
-.cc-title .editable-input {
-  text-align: center;
+.pricing-btn:hover {
+  background: #f8f9fa;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,.30), 0 1px 3px 1px rgba(60,64,67,.15);
 }
 
-.editable-display {
-  transition: opacity 0.3s;
+.pricing-btn.btn-primary {
+  background: #1a73e8;
+  color: white;
+  border: none;
 }
 
-.contact-card-inner.editing {
-  border-color: var(--accent-1);
-  box-shadow: 0 0 30px rgba(108, 92, 231, 0.15);
+.pricing-btn.btn-primary:hover {
+  background: #1765cc;
 }
 
-.btn-save-pulse {
-  animation: save-pulse 1.5s ease-in-out infinite;
+/* Plan Badge in Planning */
+.plan-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--surface);
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
 }
 
-@keyframes save-pulse {
-  0%, 100% { box-shadow: 0 4px 24px var(--accent-glow); }
-  50% { box-shadow: 0 4px 32px rgba(0, 206, 201, 0.4); }
+.plan-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
 }
+
+.dot-basic { background: #4285f4; }
+.dot-pro { background: #34a853; }
+.dot-premium { background: #fbbc05; }
+
+.contact-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px;
+  margin-top: 60px;
+}
+
+.contact-card-inner {
+  background: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  color: #3c4043;
+}
+
+[data-theme="dark"] .contact-card-inner {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.cc-name { padding: 0 !important; }
 
 .save-toast {
   position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%) translateY(80px);
+  z-index: 1000;
+}
   padding: 12px 28px;
   background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   color: white;

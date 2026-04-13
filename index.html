@@ -602,6 +602,13 @@
         </p>
       </div>
 
+      <!-- Current Plan Indicator -->
+      <div id="selected-plan-indicator" class="plan-indicator animate-in" style="display: none;">
+        <span id="plan-dot" class="plan-dot dot-basic"></span>
+        <span id="plan-name">基础版</span> | 
+        <span id="plan-status">报告额度: 3/3</span>
+      </div>
+
       <div class="planning-qa-container animate-in">
         <!-- QA Form -->
         <div class="qa-form" id="ai-qa-form">
@@ -672,30 +679,114 @@
   <!-- Contact Section -->
   <section id="contact" class="section section-contact">
     <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-tag">服务产品</span>
+        <h2 class="section-title">选择适合您的<span class="gradient-text">导航方案</span></h2>
+        <p class="section-desc">
+          参考 Google One 会员模式，选择不同方案享受差异化深度服务。
+        </p>
+      </div>
+
+      <!-- Pricing Tiers (Google One Style) -->
+      <div class="pricing-grid animate-in">
+        <!-- Basic Tier -->
+        <div class="pricing-card card-basic" id="card-basic">
+          <div class="pricing-header">
+            <h3 class="pricing-name">基础版</h3>
+            <div class="pricing-price">
+              <span class="currency">¥</span>0
+            </div>
+            <p class="pricing-desc">快速获取基础分析，适合初试用户</p>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">
+              <span>网页端即时获取3页诊断信息</span>
+            </li>
+            <li class="pricing-feature">
+              <span>支持在线生成 3 次诊断报告</span>
+            </li>
+            <li class="pricing-feature disabled">
+              <span>不支持 PDF 报告导出下载</span>
+            </li>
+            <li class="pricing-feature disabled">
+              <span>无专家人工审核回复</span>
+            </li>
+          </ul>
+          <button class="pricing-btn" onclick="selectPlan('basic')">选择基础版</button>
+        </div>
+
+        <!-- Pro Tier -->
+        <div class="pricing-card card-pro selected" id="card-pro">
+          <div class="pricing-header">
+            <h3 class="pricing-name">专业版</h3>
+            <div class="pricing-price">
+              <span class="currency">¥</span>299
+            </div>
+            <p class="pricing-desc">详细诊断报告并支持 PDF 邮件发送</p>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">
+              <span>输出完整版详细职业诊断报告</span>
+            </li>
+            <li class="pricing-feature">
+              <span><strong>支持 PDF 导出并发送至邮箱</strong></span>
+            </li>
+            <li class="pricing-feature">
+              <span>4小时内快速交付，2次邮件答疑</span>
+            </li>
+            <li class="pricing-feature">
+              <span>生成次数不受限制</span>
+            </li>
+          </ul>
+          <button class="pricing-btn btn-primary" onclick="selectPlan('pro')">选择专业版</button>
+        </div>
+
+        <!-- Premium Tier -->
+        <div class="pricing-card card-premium" id="card-premium">
+          <div class="pricing-header">
+            <h3 class="pricing-name">旗舰版</h3>
+            <div class="pricing-price">
+              <span class="currency">¥</span>1899
+            </div>
+            <p class="pricing-desc">专家 1v1 审核并在微信深度交流</p>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">
+              <span><strong>加微信(1800227125)发送诊断报告</strong></span>
+            </li>
+            <li class="pricing-feature">
+              <span>专家人工深度审核报告内容</span>
+            </li>
+            <li class="pricing-feature">
+              <span>1对1 专家深度咨询与3个月陪跑</span>
+            </li>
+            <li class="pricing-feature">
+              <span>终身职业咨询及行业情报服务</span>
+            </li>
+          </ul>
+          <button class="pricing-btn" onclick="selectPlan('premium')">选择旗舰版</button>
+        </div>
+      </div>
+
       <div class="contact-wrapper animate-in">
         <div class="contact-info">
-          <span class="section-tag">找到我</span>
-          <h2 class="section-title">开启你的<br /><span class="gradient-text">AI时代职业规划</span></h2>
+          <span class="section-tag">关于我</span>
+          <h2 class="section-title">您的 AI 时代<br /><span class="gradient-text">职业领航员</span></h2>
           <p class="contact-desc">
-            无论你是想评估现有职业风险，还是探索AI时代的新机会，
-            我都可以为你提供一对一的专业指导。
+            不仅仅是提供一份报告，更是陪伴您在不确定的时代中，通过 AI 杠杆实现跨越式成长。
           </p>
           <div class="contact-features">
             <div class="cf-item">
-              <span class="cf-icon">✅</span>
-              <span>一对一职业风险评估</span>
+              <span class="cf-icon">🎯</span>
+              <span>帮助 500+ 位职场人成功转型 AI 赛道</span>
             </div>
             <div class="cf-item">
-              <span class="cf-icon">✅</span>
-              <span>AI时代转型路径规划</span>
+              <span class="cf-icon">💡</span>
+              <span>深耕 AI 商业化与人才战略评估 5 年</span>
             </div>
             <div class="cf-item">
-              <span class="cf-icon">✅</span>
-              <span>AI工具使用培训指导</span>
-            </div>
-            <div class="cf-item">
-              <span class="cf-icon">✅</span>
-              <span>个人品牌建设建议</span>
+              <span class="cf-icon">🤝</span>
+              <span>极致私域服务，每一份报告必有回响</span>
             </div>
           </div>
         </div>
@@ -725,8 +816,8 @@
               </div>
               <div class="cc-info-item">
                 <span class="cc-info-icon">💬</span>
-                <span id="display-wechat" class="editable-display">微信：18002237125</span>
-                <input type="text" id="input-wechat" class="editable-input" value="18002237125" placeholder="微信号"
+                <span id="display-wechat" class="editable-display">微信：1800227125</span>
+                <input type="text" id="input-wechat" class="editable-input" value="1800227125" placeholder="微信号"
                   style="display:none;" />
               </div>
               <div class="cc-info-item">
@@ -749,9 +840,9 @@
               ✅ 保存信息
             </button>
             <a href="javascript:void(0);"
-              onclick="navigator.clipboard.writeText('18002237125'); const rawToast = document.createElement('div'); rawToast.textContent = '✅ 微信号 18002237125 已复制！'; rawToast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0984e3; color:#fff; padding:10px 20px; border-radius:8px; font-weight:bold; z-index:9999; animation: dropDownFade 2.5s forwards;'; document.body.appendChild(rawToast); setTimeout(()=>rawToast.remove(), 2500);"
+              onclick="navigator.clipboard.writeText('1800227125'); const rawToast = document.createElement('div'); rawToast.textContent = '✅ 微信号 1800227125 已复制！'; rawToast.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0984e3; color:#fff; padding:10px 20px; border-radius:8px; font-weight:bold; z-index:9999; animation: dropDownFade 2.5s forwards;'; document.body.appendChild(rawToast); setTimeout(()=>rawToast.remove(), 2500);"
               class="btn btn-outline btn-full" id="contact-btn" style="margin-top:10px;">
-              立即预约咨询 (加微信: 18002237125)
+              立即咨询 (加微信: 1800227125)
             </a>
           </div>
         </div>

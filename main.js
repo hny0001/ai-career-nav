@@ -12,7 +12,57 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeatmapMatrix();
   initCareerCases();
   initAIPlanning();
+  initPlanManagement();
 });
+
+// Global State
+window.currentPlan = 'pro'; 
+window.generationCount = 0;
+const MAX_BASIC_GENERATIONS = 3;
+
+function initPlanManagement() {
+  window.selectPlan = (planId) => {
+    window.currentPlan = planId;
+    
+    // Update UI Cards
+    document.querySelectorAll('.pricing-card').forEach(card => card.classList.remove('selected'));
+    document.getElementById(`card-${planId}`).classList.add('selected');
+
+    // Show indicator in Planning section
+    const indicator = document.getElementById('selected-plan-indicator');
+    const dot = document.getElementById('plan-dot');
+    const name = document.getElementById('plan-name');
+    const status = document.getElementById('plan-status');
+    
+    if (indicator) {
+      indicator.style.display = 'inline-flex';
+      if (dot) dot.className = `plan-dot dot-${planId}`;
+      if (name) {
+        const planNames = { 'basic': '基础版', 'pro': '专业版', 'premium': '旗舰版' };
+        name.textContent = planNames[planId];
+      }
+      if (status) {
+        if (planId === 'basic') {
+          status.textContent = `额度: ${MAX_BASIC_GENERATIONS - window.generationCount}/${MAX_BASIC_GENERATIONS}`;
+        } else {
+          status.textContent = '额度: 无限制';
+        }
+      }
+    }
+
+    // Smooth Scroll to Planning section
+    const planningSection = document.getElementById('planning');
+    if (planningSection) {
+      const offset = 80;
+      const top = planningSection.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+    
+    // Reset form if results were shown
+    const resetBtn = document.getElementById('qa-reset-btn');
+    if (resetBtn) resetBtn.click();
+  };
+}
 
 /* ===========================
    Particles Background
@@ -483,11 +533,27 @@ function initAIPlanning() {
       return;
     }
 
+    if (window.currentPlan === 'basic' && window.generationCount >= MAX_BASIC_GENERATIONS) {
+      alert('基础版生成的报告次数已达上限（3次）。请升级至专业版或旗舰版以获取更多报告！');
+      return;
+    }
+
+    if (window.currentPlan === 'pro' && !customer_contact.includes('@')) {
+      alert('专业版排队人数较多，请在“联系方式”中填写正确的邮箱地址，我们将把 PDF 报告发送至您的邮箱！');
+      return;
+    }
+
     planBtn.disabled = true;
     btnText.textContent = '🚀 数据分析并同步至云端...';
     
+    if (window.currentPlan === 'basic') {
+      window.generationCount++;
+      const status = document.getElementById('plan-status');
+      if (status) status.textContent = `额度: ${MAX_BASIC_GENERATIONS - window.generationCount}/${MAX_BASIC_GENERATIONS}`;
+    }
+    
     try {
-      const apiRes = await fetch('http://localhost:5000/api/consultations', {
+      const apiRes = await fetch('/api/consultations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -547,69 +613,93 @@ function initAIPlanning() {
         riskPct: riskPct, riskDesc: riskDesc, pathDesc: pathDesc, actionDesc: actionDesc
       };
       
+      const exportBtn = document.getElementById('qa-export-btn');
+      if (exportBtn) {
+        if (window.currentPlan === 'basic') {
+          exportBtn.style.display = 'none';
+        } else {
+          exportBtn.style.display = 'inline-block';
+          if (window.currentPlan === 'premium') {
+            exportBtn.innerHTML = '💬 微信发给专家审核';
+            exportBtn.onclick = (e) => {
+              e.stopPropagation();
+              navigator.clipboard.writeText('1800227125');
+              alert('✅ 您已选择旗舰版。报告 PDF 将在生成后自动开启下载，请同时添加专家微信 1800227125（已复制），并将 PDF 文件发送给专家进行深度人工审核。');
+              triggerPdfExport(window.latestReportData, exportBtn);
+            };
+          } else {
+            exportBtn.innerHTML = '📥 导出 PDF';
+            exportBtn.onclick = () => triggerPdfExport(window.latestReportData, exportBtn);
+          }
+        }
+      }
+      
     } catch(err) {
       console.warn('Backend logging failed', err);
-      alert('服务请求失败，请确保后台 5000 端口服务正在运行且允许连接。');
+      alert('服务请求失败，请确保后台服务正在运行且允许连接。');
       planBtn.disabled = false;
       btnText.textContent = '生成我的诊断报告';
     }
   });
 
+  function triggerPdfExport(d, btn) {
+    const printArea = document.getElementById('frontend-report-print-area');
+    printArea.innerHTML = `
+      <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px;">
+        <h1 style="margin: 0; font-size: 2rem; color: #333; font-family: sans-serif;">AI 时代职业导航 - 专属职业诊断报告</h1>
+        <p style="margin: 8px 0 0 0; color: #666; font-size: 0.9rem;">生成时间: ${new Date().toLocaleString()}</p>
+      </div>
+      <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 评估姓名：</strong>${d.name || '匿名用户'}</p>
+      <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 所属行业：</strong>${d.industry || '-'}</p>
+      <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 当前岗位：</strong>${d.role || '-'}</p>
+      
+      <div style="background: #fff3e0; padding: 20px; border-left: 6px solid #ff9800; margin: 30px 0; border-radius: 4px; font-family: sans-serif;">
+        <h3 style="margin-top: 0; color: #e65100; font-size: 1.4rem;">⚠️ AI 替代风险极值评估：${d.riskPct}</h3>
+        <p style="margin: 0; color: #424242; font-size: 1.1rem; line-height: 1.7;">${d.riskDesc}</p>
+      </div>
+      
+      <h3 style="color: #1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 8px; margin-top: 35px; font-size: 1.3rem; font-family: sans-serif;">🚀 推荐转型路径</h3>
+      <p style="font-size: 1.1rem; line-height: 1.7; color: #333; font-family: sans-serif;">${d.pathDesc}</p>
+      
+      <h3 style="color: #388e3c; border-bottom: 2px solid #388e3c; padding-bottom: 8px; margin-top: 35px; font-size: 1.3rem; font-family: sans-serif;">🎯 核心破局行动点</h3>
+      <p style="font-size: 1.1rem; line-height: 1.9; color: #333; font-family: sans-serif; white-space: pre-wrap;">${d.actionDesc}</p>
+      
+      <div style="background:#f5f7ff; border-left:5px solid #4e54c8; padding:20px; margin-top:50px; border-radius:6px; font-family: sans-serif;">
+        <h4 style="color:#4e54c8; margin-top:0; margin-bottom:12px; font-size:1.2rem;">👑 获取深度定制实施方案</h4>
+        <p style="font-size:1.05rem; color:#444; margin:0 0 20px 0; line-height:1.7;">
+          上述仅为平台基础模型的初步分析。若想根据您的真实履历和职场瓶颈获取量身定制的<strong>“1对1职业转型图谱”</strong>，或购买完整落地的<strong>“破局实施方案”</strong>？
+        </p>
+        <p style="font-weight:bold; color:#d32f2f; margin:0; font-size:1.15rem;">💬 欢迎向下滑动网页，联系您的专属职业发展咨询师开启破局之旅！</p>
+      </div>
+      <div style="margin-top: 50px; text-align: center; font-size: 0.9rem; color: #999; font-family: sans-serif;">
+        -- 报告由 AI Career Nav 自动生成 --
+      </div>
+    `;
+    
+    const opt = {
+      margin:       15,
+      filename:     `职业诊断报告_${d.role || '未命名'}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    const btnOrigText = btn.innerHTML;
+    btn.innerHTML = '稍等片刻...';
+    btn.disabled = true;
+    
+    html2pdf().set(opt).from(printArea).save().then(() => {
+      btn.innerHTML = btnOrigText;
+      btn.disabled = false;
+      if (window.currentPlan === 'pro') {
+        alert('✅ PDF 报告已生成并下载。我们的系统正在自动向您的邮箱发送备份文档，请注意查收！');
+      }
+    });
+  }
+
   const exportBtn = document.getElementById('qa-export-btn');
   if (exportBtn) {
-    exportBtn.addEventListener('click', () => {
-      if (!window.latestReportData) return;
-      const d = window.latestReportData;
-      const printArea = document.getElementById('frontend-report-print-area');
-      printArea.innerHTML = `
-        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 25px;">
-          <h1 style="margin: 0; font-size: 2rem; color: #333; font-family: sans-serif;">AI 时代职业导航 - 专属职业诊断报告</h1>
-          <p style="margin: 8px 0 0 0; color: #666; font-size: 0.9rem;">生成时间: ${new Date().toLocaleString()}</p>
-        </div>
-        <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 评估姓名：</strong>${d.name || '匿名用户'}</p>
-        <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 所属行业：</strong>${d.industry || '-'}</p>
-        <p style="font-size: 1.1rem; margin: 10px 0; font-family: sans-serif;"><strong>👉 当前岗位：</strong>${d.role || '-'}</p>
-        
-        <div style="background: #fff3e0; padding: 20px; border-left: 6px solid #ff9800; margin: 30px 0; border-radius: 4px; font-family: sans-serif;">
-          <h3 style="margin-top: 0; color: #e65100; font-size: 1.4rem;">⚠️ AI 替代风险极值评估：${d.riskPct}</h3>
-          <p style="margin: 0; color: #424242; font-size: 1.1rem; line-height: 1.7;">${d.riskDesc}</p>
-        </div>
-        
-        <h3 style="color: #1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 8px; margin-top: 35px; font-size: 1.3rem; font-family: sans-serif;">🚀 推荐转型路径</h3>
-        <p style="font-size: 1.1rem; line-height: 1.7; color: #333; font-family: sans-serif;">${d.pathDesc}</p>
-        
-        <h3 style="color: #388e3c; border-bottom: 2px solid #388e3c; padding-bottom: 8px; margin-top: 35px; font-size: 1.3rem; font-family: sans-serif;">🎯 核心破局行动点</h3>
-        <p style="font-size: 1.1rem; line-height: 1.9; color: #333; font-family: sans-serif; white-space: pre-wrap;">${d.actionDesc}</p>
-        
-        <div style="background:#f5f7ff; border-left:5px solid #4e54c8; padding:20px; margin-top:50px; border-radius:6px; font-family: sans-serif;">
-          <h4 style="color:#4e54c8; margin-top:0; margin-bottom:12px; font-size:1.2rem;">👑 获取深度定制实施方案</h4>
-          <p style="font-size:1.05rem; color:#444; margin:0 0 20px 0; line-height:1.7;">
-            上述仅为平台基础模型的初步分析。若想根据您的真实履历和职场瓶颈获取量身定制的<strong>“1对1职业转型图谱”</strong>，或购买完整落地的<strong>“破局实施方案”</strong>？
-          </p>
-          <p style="font-weight:bold; color:#d32f2f; margin:0; font-size:1.15rem;">💬 欢迎向下滑动网页，联系您的专属职业发展咨询师开启破局之旅！</p>
-        </div>
-        <div style="margin-top: 50px; text-align: center; font-size: 0.9rem; color: #999; font-family: sans-serif;">
-          -- 报告由 AI Career Nav 自动生成 --
-        </div>
-      `;
-      
-      const opt = {
-        margin:       15,
-        filename:     `职业诊断报告_${d.role || '未命名'}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      
-      const btnOrigText = exportBtn.textContent;
-      exportBtn.textContent = '稍等片刻...';
-      exportBtn.disabled = true;
-      
-      html2pdf().set(opt).from(printArea).save().then(() => {
-        exportBtn.textContent = btnOrigText;
-        exportBtn.disabled = false;
-      });
-    });
+    // Initial assignment will be handled by logic inside initAIPlanning results area
   }
 
   resetBtn.addEventListener('click', () => {
