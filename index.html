@@ -26,7 +26,10 @@
         <a href="#heatmap" class="nav-link" data-section="heatmap">风险热力图</a>
         <a href="#newcareers" class="nav-link" data-section="newcareers">新职业机会</a>
         <a href="#planning" class="nav-link" data-section="planning">AI职业规划</a>
-        <a href="#contact" class="nav-link nav-link-cta" data-section="contact">联系我</a>
+        <div class="nav-auth">
+          <button id="login-trigger-btn" class="nav-link nav-link-login">登录</button>
+          <a href="#contact" class="nav-link nav-link-cta" data-section="contact">预约咨询</a>
+        </div>
       </div>
       <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="菜单">
         <span></span><span></span><span></span>
@@ -866,6 +869,55 @@
   <div style="width: 0; height: 0; overflow: hidden;">
     <div id="frontend-report-print-area"
       style="width: 800px; padding: 40px; background: #fff; color: #333; box-sizing: border-box;"></div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="auth-modal">
+      <button class="modal-close" id="login-close">&times;</button>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">登录</button>
+        <button class="auth-tab" data-tab="register">注册</button>
+      </div>
+      <div class="auth-form-container">
+        <form id="login-form" class="auth-form active">
+          <div class="form-group">
+            <label>手机号 / 邮箱</label>
+            <input type="text" placeholder="请输入您的账号..." required>
+          </div>
+          <div class="form-group">
+            <label>密码</label>
+            <input type="password" placeholder="请输入密码..." required>
+          </div>
+          <div class="form-options">
+            <label class="remember-me"><input type="checkbox"> 记住我</label>
+            <a href="#" class="forgot-pw">忘记密码？</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">立即登录</button>
+        </form>
+        <form id="register-form" class="auth-form">
+          <div class="form-group">
+            <label>称呼</label>
+            <input type="text" placeholder="如何称呼您？" required>
+          </div>
+          <div class="form-group">
+            <label>手机号 / 邮箱</label>
+            <input type="text" placeholder="用于接收报告与通知..." required>
+          </div>
+          <div class="form-group">
+            <label>设置密码</label>
+            <input type="password" placeholder="至少6位字符..." required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">注册新账号</button>
+        </form>
+      </div>
+      <div class="auth-divider"><span>或通过以下方式继续</span></div>
+      <div class="auth-social">
+        <button class="social-btn wechat-btn">
+          <i>💬</i> 微信快捷登录
+        </button>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

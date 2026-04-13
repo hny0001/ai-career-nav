@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCareerCases();
   initAIPlanning();
   initPlanManagement();
+  initAuth();
 });
 
 // Global State
@@ -835,4 +836,82 @@ function initCareerCases() {
       closeModal();
     }
   });
+}
+
+/* ===========================
+   Authentication Logic
+   =========================== */
+function initAuth() {
+  const modal = document.getElementById('login-modal');
+  const trigger = document.getElementById('login-trigger-btn');
+  const close = document.getElementById('login-close');
+  const tabs = document.querySelectorAll('.auth-tab');
+  const forms = document.querySelectorAll('.auth-form');
+
+  if (!modal || !trigger || !close) return;
+
+  // Toggle Modal
+  trigger.addEventListener('click', () => {
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  });
+
+  const closeModal = () => {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  close.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Tab Switching
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      forms.forEach(f => f.classList.remove('active'));
+      document.getElementById(`${target}-form`).classList.add('active');
+    });
+  });
+
+  // Form Submission (Simulated)
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+
+  const handleAuthSubmit = (e, type) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const origText = btn.textContent;
+    btn.textContent = type === 'login' ? '正在登录...' : '正在注册...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      closeModal();
+      btn.textContent = origText;
+      btn.disabled = false;
+      
+      // Show success message
+      const toast = document.createElement('div');
+      toast.className = 'save-toast show';
+      toast.style.background = '#2ed573';
+      toast.innerHTML = `✅ ${type === 'login' ? '登录成功！欢迎回来' : '注册成功！'}`;
+      document.body.appendChild(toast);
+      
+      // Update Nav for logged in state
+      trigger.innerHTML = `<span class="user-avatar-mini" style="width:24px; height:24px; font-size: 0.7rem; margin-right:8px; background:var(--accent-2); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:#fff;">U</span> 我的账号`;
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    }, 1500);
+  };
+
+  if (loginForm) loginForm.addEventListener('submit', (e) => handleAuthSubmit(e, 'login'));
+  if (registerForm) registerForm.addEventListener('submit', (e) => handleAuthSubmit(e, 'register'));
 }
