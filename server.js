@@ -41,6 +41,15 @@ const db = new sqlite3.Database('./biz.db', (err) => {
       status TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      wechat_openid TEXT UNIQUE,
+      nickname TEXT,
+      avatar_url TEXT,
+      last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
   }
 });
 
@@ -143,6 +152,40 @@ app.get('/api/summary', (req, res) => {
         totalRevenue: row2 && row2.total_revenue ? row2.total_revenue : 0
       });
     });
+  });
+});
+
+// API endpoint to handle WeChat login (Mock implementation)
+app.post('/api/auth/wechat', (req, res) => {
+  const { openid, nickname, avatar_url } = req.body;
+  
+  if (!openid) {
+    return res.status(400).json({ error: 'Missing OpenID' });
+  }
+
+  // Insert or Update user
+  const sql = `INSERT INTO users (wechat_openid, nickname, avatar_url, last_login)
+               VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+               ON CONFLICT(wechat_openid) DO UPDATE SET
+               nickname = excluded.nickname,
+               avatar_url = excluded.avatar_url,
+               last_login = CURRENT_TIMESTAMP`;
+               
+  db.run(sql, [openid, nickname || '微信用户', avatar_url || ''], function(err) {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    res.json({ message: 'User recorded successfully', userId: this.lastID });
+  });
+});
+
+// API endpoint to get users (for admin)
+app.get('/api/users', (req, res) => {
+  db.all(`SELECT * FROM users ORDER BY last_login DESC`, [], (err, rows) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    res.json(rows);
   });
 });
 

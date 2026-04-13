@@ -882,6 +882,86 @@ function initAuth() {
   // Form Submission (Simulated)
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
+  const wechatBtn = document.querySelector('.wechat-btn');
+  const qrContainer = document.getElementById('wechat-qr-container');
+  const formContainer = document.querySelector('.auth-form-container');
+  const backBtn = document.getElementById('back-to-login-btn');
+  const authTabs = document.querySelector('.auth-tabs');
+  const authDivider = document.querySelector('.auth-divider');
+  const authSocial = document.querySelector('.auth-social');
+
+  if (wechatBtn && qrContainer) {
+    wechatBtn.addEventListener('click', () => {
+      // Hide other forms and tabs
+      forms.forEach(f => f.classList.remove('active'));
+      authTabs.style.display = 'none';
+      authDivider.style.display = 'none';
+      authSocial.style.display = 'none';
+      qrContainer.classList.add('active');
+      
+      // Simulate scan success after 5 seconds
+      setTimeout(async () => {
+        if (qrContainer.classList.contains('active')) {
+          qrContainer.querySelector('.qr-status-msg').innerHTML = '<strong>已扫描，等待确认...</strong>';
+          
+          setTimeout(async () => {
+            // Mock WeChat user data
+            const mockUser = {
+              openid: 'wx_mock_' + Math.random().toString(36).substr(2, 9),
+              nickname: '微信访客_' + Math.floor(Math.random() * 1000),
+              avatar_url: ''
+            };
+
+            try {
+              const res = await fetch('/api/auth/wechat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(mockUser)
+              });
+              
+              if (res.ok) {
+                closeModal();
+                const toast = document.createElement('div');
+                toast.className = 'save-toast show';
+                toast.style.background = '#2ed573';
+                toast.innerHTML = `✅ 微信登录成功！欢迎，${mockUser.nickname}`;
+                document.body.appendChild(toast);
+                
+                trigger.innerHTML = `<span class="user-avatar-mini" style="width:24px; height:24px; font-size: 0.7rem; margin-right:8px; background:var(--accent-2); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:#fff;">${mockUser.nickname.charAt(0)}</span> ${mockUser.nickname}`;
+                
+                setTimeout(() => {
+                  toast.classList.remove('show');
+                  setTimeout(() => toast.remove(), 500);
+                }, 3000);
+
+                // Reset modal for next time
+                resetAuthModal();
+              }
+            } catch (err) {
+              console.error('WeChat Login Error:', err);
+            }
+          }, 2000);
+        }
+      }, 3000);
+    });
+  }
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      resetAuthModal();
+      document.querySelector('.auth-tab[data-tab="login"]').click();
+    });
+  }
+
+  function resetAuthModal() {
+    qrContainer.classList.remove('active');
+    qrContainer.querySelector('.qr-status-msg').innerHTML = '使用微信扫一扫登录<br><strong>AI 职业导航</strong>';
+    authTabs.style.display = 'flex';
+    authDivider.style.display = 'block';
+    authSocial.style.display = 'flex';
+    forms.forEach(f => f.classList.remove('active'));
+    document.getElementById('login-form').classList.add('active');
+  }
 
   const handleAuthSubmit = (e, type) => {
     e.preventDefault();

@@ -174,6 +174,23 @@
         </tbody>
       </table>
     </div>
+    <div class="panel">
+      <h2>🧑‍🤝‍🧑 注册用户数据</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>微信 OpenID</th>
+            <th>昵称</th>
+            <th>最后登录时间</th>
+            <th>创建时间</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody">
+          <tr><td colspan="5">加载中...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="modal" id="report-modal">
     <div class="modal-content">
@@ -189,15 +206,17 @@
 
     async function fetchData() {
       try {
-        const [summaryRes, consultRes, billingRes] = await Promise.all([
+        const [summaryRes, consultRes, billingRes, usersRes] = await Promise.all([
           fetch(API_BASE + '/summary'),
           fetch(API_BASE + '/consultations'),
-          fetch(API_BASE + '/billing')
+          fetch(API_BASE + '/billing'),
+          fetch(API_BASE + '/users')
         ]);
         
         const summary = await summaryRes.json();
         const consults = await consultRes.json();
         const bills = await billingRes.json();
+        const users = await usersRes.json();
 
         document.getElementById('stat-customers').textContent = summary.totalCustomers;
         document.getElementById('stat-revenue').textContent = '¥ ' + (summary.totalRevenue || 0).toFixed(2);
@@ -230,6 +249,18 @@
           </tr>
         `).join('');
         if (bills.length === 0) billingTbody.innerHTML = '<tr><td colspan="6">暂无账单</td></tr>';
+
+        const usersTbody = document.getElementById('users-tbody');
+        usersTbody.innerHTML = users.map(u => `
+          <tr>
+            <td>${u.id}</td>
+            <td><code style="font-size: 0.8rem;">${u.wechat_openid}</code></td>
+            <td><strong>${u.nickname}</strong></td>
+            <td>${new Date(u.last_login).toLocaleString()}</td>
+            <td>${new Date(u.created_at).toLocaleString()}</td>
+          </tr>
+        `).join('');
+        if (users.length === 0) usersTbody.innerHTML = '<tr><td colspan="5">暂无注册用户</td></tr>';
 
       } catch(e) {
         console.error(e);

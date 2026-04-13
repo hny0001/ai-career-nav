@@ -2095,3 +2095,67 @@ img {
 .social-btn:hover {
   transform: scale(1.02);
 }
+
+/* ===========================
+   WeChat Login Styles
+   =========================== */
+.wechat-qr-container {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+  animation: authFadeIn 0.4s ease;
+}
+
+.wechat-qr-container.active {
+  display: flex;
+}
+
+.wechat-qr-wrapper {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  border: 1px solid #eee;
+}
+
+.wechat-qr-wrapper img {
+  width: 180px;
+  height: 180px;
+  display: block;
+}
+
+.qr-status-msg {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.qr-status-msg strong {
+  color: var(--accent-2);
+}
+
+.back-to-login {
+  margin-top: 25px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: color 0.3s;
+}
+
+.back-to-login:hover {
+  color: var(--accent-2);
+  text-decoration: underline;
+}
+
+@keyframes authFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+

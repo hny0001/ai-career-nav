@@ -910,6 +910,18 @@
           </div>
           <button type="submit" class="btn btn-primary btn-full">注册新账号</button>
         </form>
+
+        <!-- WeChat QR Container -->
+        <div id="wechat-qr-container" class="wechat-qr-container">
+          <div class="wechat-qr-wrapper">
+            <img id="wechat-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://ai-career.vip/wechat-login-mock" alt="微信扫码登录">
+          </div>
+          <div class="qr-status-msg">
+            使用微信扫一扫登录<br>
+            <strong>AI 职业导航</strong>
+          </div>
+          <button class="back-to-login" id="back-to-login-btn">返回账号登录</button>
+        </div>
       </div>
       <div class="auth-divider"><span>或通过以下方式继续</span></div>
       <div class="auth-social">
