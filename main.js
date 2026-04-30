@@ -592,7 +592,7 @@ function initAIPlanning() {
         resultBody.innerHTML = `
           <div style="width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px;">
             <div style="min-width: 600px; padding-bottom: 20px;">
-              \${generateSharedReportHtml(window.latestReportData)}
+              ${generateSharedReportHtml(window.latestReportData)}
             </div>
           </div>
         `;
@@ -675,6 +675,24 @@ function initAIPlanning() {
               alert('✅ 您已选择旗舰版。报告 PDF 将在生成后自动开启下载，请同时添加专家微信 1800227125（已复制），并将 PDF 文件发送给专家进行深度人工审核。');
               const filename = 'AI_Career_Report_' + (window.latestReportData.role || 'Plan').replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, '_') + '.pdf';
               sharedExportPdf(window.latestReportData, filename, exportBtn, exportBtn.innerHTML, html2pdf);
+            };
+          } else {
+            exportBtn.innerHTML = '📥 导出 PDF';
+            exportBtn.onclick = () => {
+              const filename = 'AI_Career_Report_' + (window.latestReportData.role || 'Plan').replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, '_') + '.pdf';
+              sharedExportPdf(window.latestReportData, filename, exportBtn, exportBtn.innerHTML, html2pdf);
+            };
+          }
+        }
+      }
+      
+    } catch(err) {
+      console.warn('Backend logging failed', err);
+      alert('服务请求失败，请确保后台服务正在运行且允许连接。');
+      planBtn.disabled = false;
+      btnText.textContent = '生成我的诊断报告';
+    }
+  });
 
   const exportBtn = document.getElementById('qa-export-btn');
   if (exportBtn) {
