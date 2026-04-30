@@ -87,48 +87,65 @@ function initParticles() {
    =========================== */
 function initNavigation() {
   const nav = document.getElementById('main-nav');
+  if (!nav) return;
+
   const links = document.querySelectorAll('.nav-link[data-section]');
 
-  // Scroll state
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-
-    // Active link
+  // Scroll state update
+  const updateActiveLink = () => {
     const sections = ['history', 'heatmap', 'newcareers', 'planning', 'contact'];
     let current = '';
+    const scrollPos = window.scrollY + 150;
+
     sections.forEach(id => {
       const section = document.getElementById(id);
-      if (section) {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= 200) {
-          current = id;
-        }
+      if (section && section.offsetTop <= scrollPos) {
+        current = id;
       }
     });
 
     links.forEach(link => {
       link.classList.toggle('active', link.dataset.section === current);
     });
-  });
+    
+    if (window.scrollY > 50) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  };
 
-  // Smooth scroll for nav links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      const href = this.getAttribute('href');
-      if (href === '#') return;
+  window.addEventListener('scroll', updateActiveLink);
+  updateActiveLink();
+
+  // Robust Smooth Scroll for all anchor links
+  document.addEventListener('click', (e) => {
+    const anchor = e.target.closest('a[href^="#"]');
+    if (!anchor) return;
+
+    const href = anchor.getAttribute('href');
+    if (href === '#') return;
+
+    const target = document.getElementById(href.substring(1));
+    if (target) {
+      e.preventDefault();
+      const offset = 80;
+      const targetTop = target.getBoundingClientRect().top + window.scrollY - offset;
       
-      const target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        const offset = 80;
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
+      window.scrollTo({
+        top: targetTop,
+        behavior: 'smooth'
+      });
+      
+      // Close mobile menu if open
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      if (mobileMenu && mobileMenu.classList.contains('open')) {
+        mobileMenu.classList.remove('open');
+        mobileBtn.classList.remove('active');
+        document.body.style.overflow = '';
       }
-    });
+    }
   });
 }
 
@@ -208,15 +225,6 @@ function initMobileMenu() {
     btn.classList.toggle('active');
     menu.classList.toggle('open');
     document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
-  });
-
-  // Close on link click
-  document.querySelectorAll('.mobile-link').forEach(link => {
-    link.addEventListener('click', () => {
-      btn.classList.remove('active');
-      menu.classList.remove('open');
-      document.body.style.overflow = '';
-    });
   });
 }
 

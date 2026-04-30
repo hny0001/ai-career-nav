@@ -98,13 +98,28 @@ function sharedExportPdf(data, filename, btn, origText, html2pdf) {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: ['css', 'legacy'] }
   };
-  // 3. 执行导出
-  html2pdf().set(opt).from(container).save(filename).then(() => {
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = origText;
-    }
-    document.body.removeChild(container);
+  // 3. 执行导出 (使用更稳健的手动下载逻辑，防止部分浏览器将其重命名为 UUID)
+  const worker = html2pdf().set(opt).from(container);
+  
+  worker.toPdf().output('blob').then((blob) => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    
+    // 清理
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      if (document.body.contains(container)) document.body.removeChild(container);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    }, 100);
   }).catch(err => {
     console.error('PDF Export Error:', err);
     if (btn) {
@@ -112,7 +127,7 @@ function sharedExportPdf(data, filename, btn, origText, html2pdf) {
       btn.innerHTML = origText;
     }
     if (document.body.contains(container)) document.body.removeChild(container);
-    alert('❌ PDF 导出失败，请重试或更换浏览器。');
+    alert('❌ PDF 导出失败，请重试。建议使用 Chrome 浏览器。');
   });
 }
 
