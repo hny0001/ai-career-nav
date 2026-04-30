@@ -528,8 +528,8 @@ function initAIPlanning() {
     const role = document.getElementById('ai-role').value.trim();
     const edu = document.getElementById('ai-edu') ? document.getElementById('ai-edu').value : '';
     const exp = document.getElementById('ai-exp') ? document.getElementById('ai-exp').value : '';
-    const content = document.getElementById('ai-content').value.trim();
-    const env = document.getElementById('ai-env').value.trim();
+    const content = document.getElementById('ai-content') ? document.getElementById('ai-content').value.trim() : '';
+    const env = document.getElementById('ai-env') ? document.getElementById('ai-env').value.trim() : '';
 
     if (!industry || (!role)) {
       alert('请填写你所在的行业和岗位！');
