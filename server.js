@@ -4,12 +4,14 @@ const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = 8080;
 
 app.use(cors());
 app.use(express.json());
+app.set('trust proxy', 1);
 // Serve static files to access index.html and admin.html
 app.use(express.static(path.join(__dirname)));
 
@@ -27,11 +29,17 @@ const db = new sqlite3.Database('./biz.db', (err) => {
       customer_contact TEXT,
       industry TEXT,
       role TEXT,
+      edu TEXT,
+      exp TEXT,
       work_content TEXT,
       work_env TEXT,
       risk_score TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    // Safely add new columns if they don't exist
+    db.run(`ALTER TABLE consultations ADD COLUMN edu TEXT`, () => {});
+    db.run(`ALTER TABLE consultations ADD COLUMN exp TEXT`, () => {});
 
     db.run(`CREATE TABLE IF NOT EXISTS billing (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +63,7 @@ const db = new sqlite3.Database('./biz.db', (err) => {
 
 // API endpoint to save a new consultation
 app.post('/api/consultations', async (req, res) => {
-  const { customer_name, customer_contact, industry, role, work_content, work_env } = req.body;
+  const { customer_name, customer_contact, industry, role, edu, exp, work_content, work_env } = req.body;
   
   let aiReport = {
     riskPct: '系统保底评估模式',
@@ -65,26 +73,35 @@ app.post('/api/consultations', async (req, res) => {
   };
 
   const apiKey = process.env.AI_API_KEY;
-  const apiUrl = process.env.AI_API_URL || 'https://api.openai.com/v1/chat/completions';
+  let apiUrl = process.env.AI_API_URL || 'https://api.openai.com/v1/chat/completions';
   const modelName = process.env.AI_MODEL_NAME || 'gpt-4o';
+
+  // 自动补全接口路径（如果用户只填了基础地址）
+  if (apiUrl && !apiUrl.endsWith('/chat/completions')) {
+    apiUrl = apiUrl.replace(/\/$/, '') + '/chat/completions';
+  }
 
   if (apiKey && apiKey.trim() !== '') {
     try {
-      const prompt = `你是一位经验丰富、视角犀利的【职业发展咨询师】与【AI转型专家】。
-客户当前行业：${industry}
-客户当前岗位：${role}
-客户描述的工作内容：${work_content || '未提供，请根据行业岗位推测其核心工作'}
-客户所处的职场环境或痛点：${work_env || '未提供，请根据行业大环境推测'}
+      const prompt = `你是一位顶尖的【AI时代职业发展规划资深专家】与【商业变现教练】。
+客户档案：
+- 所在行业：${industry}
+- 当前岗位：${role}
+- 最高学历：${edu || '未提供'}
+- 工作年限：${exp || '未提供'}
+- 核心工作内容：${work_content || '未提供，请根据行业岗位推测其核心日常工作'}
+- 职场环境与痛点：${work_env || '未提供，请结合当前宏观经济与AI冲击进行推测'}
 
-请为该客户诊断“他的工作被 AI（如大语言模型、RPA、自动生成工具等）替代的风险”，并针对他的独有情况给出一份“专属”的职业破局与转型指南。
-你的语气应该是专业、有一点压迫感危机感，但同时给出希望的建议。不要说废话。
+请为该客户生成一份极度详尽、极其专业、且【每个人绝对不重样】的“AI时代专属职业诊断与转型落地报告”。
+你的语气必须极具专业深度、充满洞察力（带有一点让人清醒的危机感，但最终给出极其清晰的破局希望）。不要说废话，不要讲大道理，直接切中要害。
 
-请必须以纯 JSON 格式直接返回，包含以下严格的结构（没有任何多余标记）：
+请必须以纯 JSON 格式返回，包含以下结构，**且每个字段的内容必须非常详实（每部分要求输出400-600字左右的深度长文分析），以确保最终生成的报告有3-5页的内容厚度**：
+
 {
-  "riskPct": "仅回复百分百数字范围，如 85%-90%",
-  "riskDesc": "结合客户具体工作内容分析为什么是这个风险级别（尽量精准切中要害，100-150字）",
-  "pathDesc": "结合他的环境痛点，推荐他的职场转型终极方向是什么（不要泛泛而谈，尽量具体，100字左右）",
-  "actionDesc": "直接给出 3 条客户明天上班就能做落地的具体破局行动点，用换行符分隔"
+  "riskPct": "仅回复风险极值数字百分比范围（如 85%-90%）",
+  "riskDesc": "【现状与危机深度剖析】结合客户的学历、年限、工作内容和痛点，进行长篇深度分析：1. 当前岗位在未来1-3年内被大模型自动化工具取代的具体环节与推演路径；2. 客户现有经验的贬值风险；3. 行业洗牌趋势下，哪些“伪能力”将失去溢价。要求分段落、有条理，深度剖析（500字左右）。",
+  "pathDesc": "【转型方向与高薪职位推荐】为他量身定制未来3-5年的转型蓝图：1. 核心破局思路是什么（不要泛泛而谈，结合他的过往优势和AI做加法）；2. 推荐3个极具前景的“AI+”具体新岗位（如AI产品架构师/AI业务增长黑客/AI智能体全栈开发等），并详细说明这些岗位为什么适合他、薪资前景及所需的新核心壁垒。（500字左右）。",
+  "actionDesc": "【30天高能破局落地计划】给出直接可以照做的执行清单：第一周（认知破局与工具武装）、第二周（结合现有业务线的小范围AI提效实验）、第三周（重构个人核心资产与知识库）、第四周（副业或内部转型的最小MVP验证）。必须极其具体，包含推荐的AI工具及具体怎么用。（500字左右）。"
 }`;
 
       const aiResponse = await axios.post(apiUrl, {
@@ -109,10 +126,10 @@ app.post('/api/consultations', async (req, res) => {
 
   const serializedScore = JSON.stringify(aiReport);
 
-  const sql = `INSERT INTO consultations (customer_name, customer_contact, industry, role, work_content, work_env, risk_score)
-               VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO consultations (customer_name, customer_contact, industry, role, edu, exp, work_content, work_env, risk_score)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
                
-  db.run(sql, [customer_name, customer_contact, industry, role, work_content, work_env, serializedScore], function(err) {
+  db.run(sql, [customer_name, customer_contact, industry, role, edu, exp, work_content, work_env, serializedScore], function(err) {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
@@ -153,6 +170,63 @@ app.get('/api/summary', (req, res) => {
       });
     });
   });
+});
+
+// API endpoint to send report via email (Real implementation)
+app.post('/api/send-report-email', async (req, res) => {
+  const { email, report, pdfBase64 } = req.body;
+  
+  if (!email || !report) {
+    return res.status(400).json({ error: 'Missing email or report data' });
+  }
+
+  // Check if SMTP is configured
+  if (process.env.SMTP_USER === 'your_qq_number@qq.com' || !process.env.SMTP_PASS) {
+    console.log(`[SMTP INFO] Sending simulated email to: ${email} (SMTP not configured)`);
+    return res.status(200).json({ message: 'Simulated: SMTP not configured in .env. Please fill in your real credentials!' });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.qq.com',
+      port: parseInt(process.env.SMTP_PORT) || 465,
+      secure: true, // Use SSL
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: `"${process.env.SMTP_FROM_NAME || 'AI 职业导航'}" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: `您的 AI 专属职业诊断报告 - ${report.role}`,
+      text: `您好！
+感谢您使用 AI 职业导航服务。附件为您生成的专属职业诊断报告。
+      
+您的风险评估极值：${report.riskPct}
+行业建议：${report.pathDesc}
+      
+祝您职业发展顺利！`,
+      attachments: []
+    };
+
+    // If PDF is provided from frontend
+    if (pdfBase64) {
+      mailOptions.attachments.push({
+        filename: `AI职业诊断报告_${report.role}.pdf`,
+        content: pdfBase64.split('base64,')[1],
+        encoding: 'base64'
+      });
+    }
+
+    await transporter.sendMail(mailOptions);
+    console.log(`[SUCCESS] Email sent to: ${email}`);
+    res.json({ message: 'Email sent successfully with PDF attachment' });
+  } catch (err) {
+    console.error('[ERROR] Failed to send email:', err.message);
+    res.status(500).json({ error: 'Failed to send email: ' + err.message });
+  }
 });
 
 // API endpoint to handle WeChat login (Mock implementation)

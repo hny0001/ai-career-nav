@@ -1816,7 +1816,8 @@ img {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.03);
@@ -1828,8 +1829,14 @@ img {
   transition: all 0.3s;
 }
 
+.form-group select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
   border-color: var(--accent-1);
   background: rgba(255, 255, 255, 0.05);
@@ -2159,3 +2166,60 @@ img {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* ===========================
+   PDF Export Mode Styles
+   =========================== */
+.pdf-export-mode {
+  background: white !important;
+  color: black !important;
+}
+
+.pdf-export-mode #main-nav,
+.pdf-export-mode #qa-email-group,
+.pdf-export-mode #qa-export-btn,
+.pdf-export-mode #qa-reset-btn,
+.pdf-export-mode #ai-cta-box,
+.pdf-export-mode .nav,
+.pdf-export-mode .hero,
+.pdf-export-mode .section:not(#planning),
+.pdf-export-mode .section-header {
+  display: none !important;
+}
+
+.pdf-export-mode #planning {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: white !important;
+}
+
+.pdf-export-mode #ai-qa-result {
+  display: block !important;
+  background: white !important;
+  color: #333 !important;
+  padding: 40px !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 800px !important;
+  margin: 0 auto !important;
+}
+
+.pdf-export-mode .qa-box {
+  background: #f9f9f9 !important;
+  border-left: 4px solid #6c5ce7 !important;
+  color: #333 !important;
+  margin-bottom: 20px !important;
+}
+
+.pdf-export-mode .qa-box-title {
+  color: #1a1a28 !important;
+  font-weight: bold !important;
+}
+
+.pdf-export-mode .qa-result-header h3 {
+  color: #1a1a28 !important;
+  text-align: center !important;
+  width: 100% !important;
+  border-bottom: 2px solid #eee !important;
+  padding-bottom: 15px !important;
+  margin-bottom: 25px !important;
+}
