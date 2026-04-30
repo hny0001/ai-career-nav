@@ -326,6 +326,7 @@
       c.pathDesc = pathDesc;
       c.actionDesc = actionDesc;
       
+      window.currentConsultation = c;
       document.getElementById('report-print-area').innerHTML = generateSharedReportHtml(c);
       document.getElementById('report-modal').classList.add('show');
     }
@@ -335,30 +336,9 @@
     }
 
     function exportPDF() {
-      const element = document.getElementById('report-print-area');
       const btn = document.querySelector('.btn-export');
-      const origText = btn.textContent;
-      btn.textContent = '正在生成 PDF...';
-      btn.disabled = true;
-
-      const opt = {
-        margin:       10,
-        filename:     'AI_Career_Report.pdf',
-        image:        { type: 'jpeg', quality: 0.95 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:    { mode: ['css', 'legacy'] }
-      };
-      // 使用 html2pdf 内置的 save 方法直接触发浏览器下载
-      html2pdf().set(opt).from(element).save().then(() => {
-        btn.textContent = origText;
-        btn.disabled = false;
-      }).catch(err => {
-        console.error('Admin PDF export error:', err);
-        alert('❌ 导出失败，请确保使用 Chrome 浏览器操作');
-        btn.textContent = origText;
-        btn.disabled = false;
-      });
+      const filename = `AI_Career_Report_${currentConsultation.customer_name || 'Admin'}.pdf`;
+      sharedExportPdf(currentConsultation, filename, btn, btn.textContent, html2pdf);
     }
   </script>
   <script src="report-template.js"></script>

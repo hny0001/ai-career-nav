@@ -98,22 +98,21 @@ function sharedExportPdf(data, filename, btn, origText, html2pdf) {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: ['css', 'legacy'] }
   };
-
-  // 3. 返回 Promise
-  return html2pdf().set(opt).from(container).save().then(() => {
+  // 3. 执行导出
+  html2pdf().set(opt).from(container).save(filename).then(() => {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText;
+    }
     document.body.removeChild(container);
-    if (btn) {
-      btn.innerHTML = origText;
-      btn.disabled = false;
-    }
   }).catch(err => {
-    if (document.body.contains(container)) document.body.removeChild(container);
-    if (btn) {
-      btn.innerHTML = origText;
-      btn.disabled = false;
-    }
     console.error('PDF Export Error:', err);
-    throw err;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origText;
+    }
+    if (document.body.contains(container)) document.body.removeChild(container);
+    alert('❌ PDF 导出失败，请重试或更换浏览器。');
   });
 }
 

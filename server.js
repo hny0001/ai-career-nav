@@ -7,7 +7,7 @@ const axios = require('axios');
 const nodemailer = require('nodemailer');
 
 const app = express();
-const port = 8080;
+const port = 80;
 
 app.use(cors());
 app.use(express.json());

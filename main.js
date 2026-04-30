@@ -98,7 +98,7 @@ function initNavigation() {
     }
 
     // Active link
-    const sections = ['history', 'heatmap', 'newcareers', 'contact'];
+    const sections = ['history', 'heatmap', 'newcareers', 'planning', 'contact'];
     let current = '';
     sections.forEach(id => {
       const section = document.getElementById(id);
@@ -118,9 +118,12 @@ function initNavigation() {
   // Smooth scroll for nav links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+      
+      const target = document.querySelector(href);
       if (target) {
+        e.preventDefault();
         const offset = 80;
         const top = target.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({ top, behavior: 'smooth' });
